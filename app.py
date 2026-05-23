@@ -18,21 +18,20 @@ st.markdown("""
 
 /* Background Gradient */
 [data-testid="stAppViewContainer"] {
-    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
     color: white;
 }
 
 /* Glass Card */
 .glass {
-    background: rgba(15, 52, 96, 0.6);
+    background: rgba(255, 255, 255, 0.08);
     border-radius: 20px;
     padding: 25px;
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
     animation: fadeIn 1s ease-in-out;
-    color: white;
 }
 
 /* Fade Animation */
@@ -51,7 +50,6 @@ st.markdown("""
     font-size: 16px;
     border: none;
     transition: 0.3s;
-    font-weight: bold;
 }
 
 .stButton>button:hover {
@@ -61,34 +59,15 @@ st.markdown("""
 
 /* Sidebar */
 section[data-testid="stSidebar"] {
-    background: rgba(15, 52, 96, 0.8);
+    background: rgba(0,0,0,0.35);
     backdrop-filter: blur(10px);
-    color: white;
 }
 
 /* Metric Card */
 [data-testid="metric-container"] {
-    background: rgba(0, 198, 255, 0.1);
+    background: rgba(255,255,255,0.08);
     border-radius: 12px;
-    padding: 15px;
-    border: 1px solid rgba(0, 198, 255, 0.3);
-    color: white;
-}
-
-/* All text elements */
-h1, h2, h3, h4, h5, h6 {
-    color: #00d4ff !important;
-}
-
-p, span, label, div {
-    color: white !important;
-}
-
-/* Input and select elements */
-input, select, textarea {
-    background-color: rgba(0, 198, 255, 0.1) !important;
-    color: white !important;
-    border: 1px solid rgba(0, 198, 255, 0.3) !important;
+    padding: 10px;
 }
 
 </style>
@@ -105,7 +84,10 @@ st.markdown("""
 st.write("")
 
 # ------------------- LOAD MODEL -------------------
-model = pickle.load(open("model (11).pkl", "rb"))
+try:
+    model = pickle.load(open("model.pkl", "rb"))
+except:
+    model = None
 
 # ------------------- SIDEBAR -------------------
 st.sidebar.markdown("## 🔧 Machine Parameters")
