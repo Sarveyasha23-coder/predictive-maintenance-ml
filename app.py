@@ -73,6 +73,7 @@ section[data-testid="stSidebar"] {
     background: rgba(255,255,255,0.08);
     border-radius: 12px;
     padding: 10px;
+    color: white;
 }
 
 </style>
