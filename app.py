@@ -84,10 +84,9 @@ st.markdown("""
 st.write("")
 
 # ------------------- LOAD MODEL -------------------
-try:
-    model = pickle.load(open("model.pkl", "rb"))
-except:
-    model = None
+
+    model = pickle.load(open("model (11).pkl", "rb"))
+
 
 # ------------------- SIDEBAR -------------------
 st.sidebar.markdown("## 🔧 Machine Parameters")
