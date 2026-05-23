@@ -18,7 +18,8 @@ st.markdown("""
 
 /* Background Gradient */
 [data-testid="stAppViewContainer"] {
-    background: linear-gradient(135deg, #0f0c20, #15102a, #241442);
+    background: linear-gradient(135deg, #4b6cb7, #182848);
+
 
     color: white;
 }
