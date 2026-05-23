@@ -61,7 +61,8 @@ st.markdown("""
 
 /* Sidebar */
 section[data-testid="stSidebar"] {
-    background: rgba(0,0,0,0.35);
+    background: rgba(255, 255, 255, 0.75);
+
     backdrop-filter: blur(10px);
 }
 
