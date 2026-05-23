@@ -84,6 +84,38 @@ section[data-testid="stSidebar"] > div > div > div:first-child {
     font-weight: 500;
 }
 
+/* Selectbox styling */
+.stSelectbox > div > div > div {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    border-radius: 8px !important;
+}
+
+.stSelectbox > div > div > div > div {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+/* Selectbox options */
+[role="option"] {
+    background: rgba(100, 100, 150, 0.8) !important;
+    color: #ffffff !important;
+}
+
+[role="option"]:hover {
+    background: rgba(0, 198, 255, 0.6) !important;
+}
+
+/* Slider styling */
+.stSlider > div > div > div > div {
+    color: white !important;
+}
+
+.stSlider label {
+    color: #ffffff !important;
+    font-weight: 500;
+}
+
 /* Metric Card */
 [data-testid="metric-container"] {
     background: rgba(255, 255, 255, 0.12);
@@ -129,11 +161,6 @@ p, span, label, div {
     fill: white !important;
 }
 
-/* Slider styling */
-.stSlider > div > div > div > div {
-    color: white !important;
-}
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -156,7 +183,7 @@ except:
 # ------------------- SIDEBAR -------------------
 st.sidebar.markdown("## 🔧 Machine Parameters")
 
-type_option = st.sidebar.selectbox("Machine Type", ["L", "M", "H"])
+type_option = st.sidebar.selectbox("Machine Type", ["L", "M", "H"], format_func=lambda x: f"Type {x}")
 air_temp = st.sidebar.slider("Air Temperature (K)", 290, 320, 300)
 process_temp = st.sidebar.slider("Process Temperature (K)", 300, 350, 310)
 rpm = st.sidebar.slider("Rotational Speed", 1000, 3000, 1500)
