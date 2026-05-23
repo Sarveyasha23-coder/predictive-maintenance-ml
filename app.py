@@ -18,22 +18,21 @@ st.markdown("""
 
 /* Background Gradient */
 [data-testid="stAppViewContainer"] {
-    background: linear-gradient(135deg, #4b6cb7, #182848);
-
-
+    background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
     color: white;
 }
 
 /* Glass Card */
 .glass {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(15, 52, 96, 0.6);
     border-radius: 20px;
     padding: 25px;
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
     animation: fadeIn 1s ease-in-out;
+    color: white;
 }
 
 /* Fade Animation */
@@ -44,9 +43,7 @@ st.markdown("""
 
 /* Button Style */
 .stButton>button {
-    background: linear-gradient(90deg, #f8fafc, #f1f5f9);
-
-
+    background: linear-gradient(90deg, #00c6ff, #0072ff);
     color: white;
     border-radius: 12px;
     height: 3em;
@@ -54,6 +51,7 @@ st.markdown("""
     font-size: 16px;
     border: none;
     transition: 0.3s;
+    font-weight: bold;
 }
 
 .stButton>button:hover {
@@ -63,17 +61,34 @@ st.markdown("""
 
 /* Sidebar */
 section[data-testid="stSidebar"] {
-    background: rgba(255, 255, 255, 0.75);
-
+    background: rgba(15, 52, 96, 0.8);
     backdrop-filter: blur(10px);
+    color: white;
 }
 
 /* Metric Card */
 [data-testid="metric-container"] {
-    background: rgba(255,255,255,0.08);
+    background: rgba(0, 198, 255, 0.1);
     border-radius: 12px;
-    padding: 10px;
+    padding: 15px;
+    border: 1px solid rgba(0, 198, 255, 0.3);
     color: white;
+}
+
+/* All text elements */
+h1, h2, h3, h4, h5, h6 {
+    color: #00d4ff !important;
+}
+
+p, span, label, div {
+    color: white !important;
+}
+
+/* Input and select elements */
+input, select, textarea {
+    background-color: rgba(0, 198, 255, 0.1) !important;
+    color: white !important;
+    border: 1px solid rgba(0, 198, 255, 0.3) !important;
 }
 
 </style>
