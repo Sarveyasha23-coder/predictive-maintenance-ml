@@ -84,9 +84,7 @@ st.markdown("""
 st.write("")
 
 # ------------------- LOAD MODEL -------------------
-
-    model = pickle.load(open("model (11).pkl", "rb"))
-
+model = pickle.load(open("model (11).pkl", "rb"))
 
 # ------------------- SIDEBAR -------------------
 st.sidebar.markdown("## 🔧 Machine Parameters")
