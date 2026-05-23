@@ -18,21 +18,25 @@ st.markdown("""
 
 /* Background Gradient */
 [data-testid="stAppViewContainer"] {
-background: linear-gradient(135deg, #7c3aed, #431407);
-
+    background: linear-gradient(135deg, #7c3aed, #431407);
     color: white;
 }
 
 /* Glass Card */
 .glass {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.12);
     border-radius: 20px;
     padding: 25px;
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    border: 1px solid rgba(255,255,255,0.1);
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     animation: fadeIn 1s ease-in-out;
+}
+
+.glass h1, .glass h2, .glass h3, .glass h4, .glass h5, .glass h6, .glass p {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 /* Fade Animation */
@@ -43,32 +47,91 @@ background: linear-gradient(135deg, #7c3aed, #431407);
 
 /* Button Style */
 .stButton>button {
-    background: linear-gradient(90deg, #00c6ff, #0072ff);
-    color: white;
+    background: linear-gradient(90deg, #00c6ff, #0072ff) !important;
+    color: white !important;
     border-radius: 12px;
     height: 3em;
     width: 100%;
     font-size: 16px;
+    font-weight: 600;
     border: none;
     transition: 0.3s;
+    box-shadow: 0 4px 15px rgba(0, 114, 255, 0.4);
 }
 
 .stButton>button:hover {
     transform: scale(1.05);
-    box-shadow: 0 0 15px #00c6ff;
+    box-shadow: 0 0 25px #00c6ff;
 }
 
 /* Sidebar */
 section[data-testid="stSidebar"] {
-    background: rgba(0,0,0,0.35);
+    background: rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(10px);
+}
+
+section[data-testid="stSidebar"] > div > div > div:first-child {
+    color: white !important;
+}
+
+/* Sidebar Text */
+[data-testid="stSidebar"] * {
+    color: white !important;
+}
+
+[data-testid="stSidebar"] label {
+    color: #ffffff !important;
+    font-weight: 500;
 }
 
 /* Metric Card */
 [data-testid="metric-container"] {
-    background: rgba(255,255,255,0.08);
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-testid="metric-container"] * {
+    color: white !important;
+}
+
+/* Main Text */
+.main {
+    color: white !important;
+}
+
+/* Subheader */
+h1, h2, h3, h4, h5, h6 {
+    color: #ffffff !important;
+}
+
+/* Paragraphs and labels */
+p, span, label, div {
+    color: #ffffff !important;
+}
+
+/* Chart styling */
+.stPlotlyChart, .stPyplotChart {
+    background: rgba(255, 255, 255, 0.05);
     border-radius: 12px;
     padding: 10px;
+}
+
+/* DataFrame styling */
+.stDataFrame {
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+}
+
+/* Bar chart text */
+[data-testid="stBarChart"] text {
+    fill: white !important;
+}
+
+/* Slider styling */
+.stSlider > div > div > div > div {
+    color: white !important;
 }
 
 </style>
@@ -166,9 +229,15 @@ with col2:
     features_names = ["Air Temp", "Process Temp", "RPM", "Torque", "Tool Wear", "Type_L", "Type_M"]
     importance = np.random.rand(len(features_names))
 
-    fig, ax = plt.subplots()
-    ax.barh(features_names, importance)
-    ax.set_title("Feature Importance")
+    fig, ax = plt.subplots(facecolor='none')
+    ax.barh(features_names, importance, color='#00c6ff')
+    ax.set_title("Feature Importance", color='white', fontsize=14, fontweight='bold')
+    ax.set_xlabel("Importance Score", color='white')
+    ax.tick_params(colors='white')
+    ax.spines['bottom'].set_color('white')
+    ax.spines['left'].set_color('white')
+    ax.spines['top'].set_visible(False)
+    ax.spines['right'].set_visible(False)
     st.pyplot(fig)
 
     st.markdown('</div>', unsafe_allow_html=True)
