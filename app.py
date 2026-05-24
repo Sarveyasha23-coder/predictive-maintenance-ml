@@ -39,6 +39,32 @@ st.markdown("""
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
+/* Creator Badge */
+.creator-badge {
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    border-radius: 12px;
+    padding: 15px 25px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0, 198, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    animation: fadeIn 1s ease-in-out;
+}
+
+.creator-badge h4 {
+    color: #ffffff !important;
+    margin: 0 !important;
+    font-weight: 700;
+    text-shadow: 0 2px 8px rgba(0, 72, 255, 0.3);
+}
+
+.creator-badge p {
+    color: #ffffff !important;
+    margin: 5px 0 0 0 !important;
+    font-size: 14px;
+    font-weight: 500;
+}
+
 /* Fade Animation */
 @keyframes fadeIn {
     from {opacity: 0; transform: translateY(10px);}
@@ -164,6 +190,14 @@ p, span, label, div {
 </style>
 """, unsafe_allow_html=True)
 
+# ------------------- CREATOR BADGE -------------------
+st.markdown("""
+<div class="creator-badge">
+    <h4>🚀 Created by Sarveyasha Sodhiya</h4>
+    <p>Machine Learning Enthusiast | Building Intelligent Systems</p>
+</div>
+""", unsafe_allow_html=True)
+
 # ------------------- HEADER -------------------
 st.markdown("""
 <div class="glass">
@@ -268,12 +302,3 @@ with col2:
     st.pyplot(fig)
 
     st.markdown('</div>', unsafe_allow_html=True)
-
-# ------------------- FOOTER -------------------
-st.write("")
-st.markdown("""
-<div class="glass" style="text-align:center;">
-    <h4>🚀 Created by Sarveyasha Sodhiya</h4>
-    <p>Machine Learning Enthusiast | Building Intelligent Systems</p>
-</div>
-""", unsafe_allow_html=True)
