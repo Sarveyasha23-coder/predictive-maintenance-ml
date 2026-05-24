@@ -193,7 +193,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-model = pickle.load(open("model.pkl", "rb"))
+model = pickle.load(open("model (11).pkl", "rb"))
 
 
 # ------------------- SIDEBAR -------------------
