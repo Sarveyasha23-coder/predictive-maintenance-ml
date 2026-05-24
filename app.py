@@ -81,8 +81,7 @@ st.markdown("""
     transform: scale(1.05);
     box-shadow: 0 0 25px #00c6ff;
 }
-st.sidebar.markdown("## ⚡ Machine Configuration Panel")
-st.sidebar.markdown("---")
+
 /* Sidebar */
 section[data-testid="stSidebar"] {
     background: rgba(0, 0, 0, 0.4);
