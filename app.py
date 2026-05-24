@@ -204,7 +204,7 @@ st.markdown("""
     ✨ Developed by Sarveyasha Sodhiya
 </div>
 
-""", unsafe_allow_html=True)
+
 
 
 model = pickle.load(open("model (11).pkl", "rb"))
