@@ -187,9 +187,22 @@ st.markdown("""
 <div class="glass">
     <h1>⚙️ Predictive Maintenance AI</h1>
     <p>Real-time Machine Failure Prediction System powered by Machine Learning</p>
-    Developed by Sarveyasha Sodhiya
+    
 </div>
-
+<div style="
+    display:inline-block;
+    margin-top:12px;
+    padding:8px 18px;
+    border-radius:30px;
+    background:rgba(0,198,255,0.15);
+    border:1px solid rgba(0,198,255,0.35);
+    color:white;
+    font-size:14px;
+    font-weight:600;
+    backdrop-filter: blur(10px);
+">
+    ✨ Developed by Sarveyasha Sodhiya
+</div>
 
 """, unsafe_allow_html=True)
 
