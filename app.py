@@ -41,22 +41,24 @@ st.markdown("""
 
 /* Developer Credit */
 .developer-credit {
-    display: inline-block;
-    background: linear-gradient(90deg, rgba(0, 198, 255, 0.2), rgba(0, 114, 255, 0.2));
-    padding: 4px 12px;
-    border-radius: 20px;
-    border: 1px solid rgba(0, 198, 255, 0.4);
-    font-size: 13px;
-    font-weight: 600;
-    color: #00c6ff;
-    text-shadow: 0 1px 3px rgba(0, 72, 255, 0.3);
-    margin-top: 8px;
+    background: linear-gradient(135deg, #00c6ff, #0072ff);
+    padding: 12px 24px;
+    border-radius: 10px;
+    border: 2px solid rgba(0, 198, 255, 0.6);
+    font-size: 15px;
+    font-weight: 700;
+    color: #ffffff !important;
+    text-shadow: 0 2px 6px rgba(0, 72, 255, 0.4);
+    margin-top: 12px;
+    display: block;
+    text-align: center;
+    box-shadow: 0 6px 20px rgba(0, 198, 255, 0.35);
     transition: all 0.3s ease;
 }
 
 .developer-credit:hover {
-    background: linear-gradient(90deg, rgba(0, 198, 255, 0.3), rgba(0, 114, 255, 0.3));
-    box-shadow: 0 0 15px rgba(0, 198, 255, 0.3);
+    box-shadow: 0 8px 30px rgba(0, 198, 255, 0.5);
+    transform: translateY(-2px);
 }
 
 /* Fade Animation */
