@@ -185,7 +185,7 @@ p, span, label, div {
 # ------------------- HEADER -------------------
 
 <div class="glass">
-    <h1>⚙️ Predictive Maintenance AI</h1>
+    <h1> Predictive Maintenance AI</h1>
     <p>Real-time Machine Failure Prediction System powered by Machine Learning</p>
     
 </div>
