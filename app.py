@@ -203,6 +203,7 @@ st.markdown("""
         ✨ Developed by Sarveyasha Sodhiya
     </div>
 
+
 """, unsafe_allow_html=True)
 
 # ------------------- LOAD MODEL -------------------
