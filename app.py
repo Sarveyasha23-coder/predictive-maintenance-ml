@@ -189,7 +189,7 @@ p, span, label, div {
     <p>Real-time Machine Failure Prediction System powered by Machine Learning</p>
     
 </div>
-<div style="
+<div style=
     display:inline-block;
     margin-top:12px;
     padding:8px 18px;
@@ -200,7 +200,7 @@ p, span, label, div {
     font-size:14px;
     font-weight:600;
     backdrop-filter: blur(10px);
-">
+>
     ✨ Developed by Sarveyasha Sodhiya
 </div>
 
