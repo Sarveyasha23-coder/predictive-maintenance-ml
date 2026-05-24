@@ -190,8 +190,6 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-st.write("")
-
 # ------------------- LOAD MODEL -------------------
 try:
     model = pickle.load(open("model.pkl", "rb"))
