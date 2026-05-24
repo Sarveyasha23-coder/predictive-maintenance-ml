@@ -39,30 +39,24 @@ st.markdown("""
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Creator Badge */
-.creator-badge {
-    background: linear-gradient(135deg, #00c6ff, #0072ff);
-    border-radius: 12px;
-    padding: 15px 25px;
-    text-align: center;
-    margin-bottom: 20px;
-    box-shadow: 0 8px 32px rgba(0, 198, 255, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    animation: fadeIn 1s ease-in-out;
+/* Developer Credit */
+.developer-credit {
+    display: inline-block;
+    background: linear-gradient(90deg, rgba(0, 198, 255, 0.2), rgba(0, 114, 255, 0.2));
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(0, 198, 255, 0.4);
+    font-size: 13px;
+    font-weight: 600;
+    color: #00c6ff;
+    text-shadow: 0 1px 3px rgba(0, 72, 255, 0.3);
+    margin-top: 8px;
+    transition: all 0.3s ease;
 }
 
-.creator-badge h4 {
-    color: #ffffff !important;
-    margin: 0 !important;
-    font-weight: 700;
-    text-shadow: 0 2px 8px rgba(0, 72, 255, 0.3);
-}
-
-.creator-badge p {
-    color: #ffffff !important;
-    margin: 5px 0 0 0 !important;
-    font-size: 14px;
-    font-weight: 500;
+.developer-credit:hover {
+    background: linear-gradient(90deg, rgba(0, 198, 255, 0.3), rgba(0, 114, 255, 0.3));
+    box-shadow: 0 0 15px rgba(0, 198, 255, 0.3);
 }
 
 /* Fade Animation */
@@ -190,19 +184,12 @@ p, span, label, div {
 </style>
 """, unsafe_allow_html=True)
 
-# ------------------- CREATOR BADGE -------------------
-st.markdown("""
-<div class="creator-badge">
-    <h4>🚀 Created by Sarveyasha Sodhiya</h4>
-    <p>Machine Learning Enthusiast | Building Intelligent Systems</p>
-</div>
-""", unsafe_allow_html=True)
-
 # ------------------- HEADER -------------------
 st.markdown("""
 <div class="glass">
     <h1>⚙️ Predictive Maintenance AI</h1>
     <p>Real-time Machine Failure Prediction System powered by Machine Learning</p>
+    <div class="developer-credit">✨ Developed by Sarveyasha Sodhiya</div>
 </div>
 """, unsafe_allow_html=True)
 
