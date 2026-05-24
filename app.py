@@ -39,26 +39,22 @@ st.markdown("""
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-/* Developer Credit */
-.developer-credit {
-    background: linear-gradient(135deg, #00c6ff, #0072ff);
-    padding: 12px 24px;
-    border-radius: 10px;
-    border: 2px solid rgba(0, 198, 255, 0.6);
-    font-size: 15px;
-    font-weight: 700;
-    color: #ffffff !important;
-    text-shadow: 0 2px 6px rgba(0, 72, 255, 0.4);
-    margin-top: 12px;
-    display: block;
-    text-align: center;
-    box-shadow: 0 6px 20px rgba(0, 198, 255, 0.35);
-    transition: all 0.3s ease;
+/* Sidebar Toggle Button */
+[data-testid="stSidebarCollapseButton"] {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
 }
 
-.developer-credit:hover {
-    box-shadow: 0 8px 30px rgba(0, 198, 255, 0.5);
-    transform: translateY(-2px);
+[data-testid="stSidebarCollapseButton"] > button {
+    color: #00c6ff !important;
+    font-size: 24px !important;
+    font-weight: bold !important;
+}
+
+[data-testid="stSidebarCollapseButton"] > button:hover {
+    color: #ffffff !important;
+    background: rgba(0, 198, 255, 0.2) !important;
 }
 
 /* Fade Animation */
@@ -191,7 +187,6 @@ st.markdown("""
 <div class="glass">
     <h1>⚙️ Predictive Maintenance AI</h1>
     <p>Real-time Machine Failure Prediction System powered by Machine Learning</p>
-    <div class="developer-credit">✨ Developed by Sarveyasha Sodhiya</div>
 </div>
 """, unsafe_allow_html=True)
 
