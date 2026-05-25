@@ -1,9 +1,8 @@
 """
-╔══════════════════════════════════════════════════════════════════╗
-║          PREDICTIVE MAINTENANCE AI DASHBOARD                     ║
-║          Developed by Sarveyasha Sodhiya                         ║
-║          Machine Learning · Real-time Analytics · IoT Sensors    ║
-╚══════════════════════════════════════════════════════════════════╝
+╔══════════════════════════════════════════════════════════════════════════════╗
+║   PREDICTIVE MAINTENANCE AI  ·  SARVEYASHA SODHIYA                          ║
+║   Next-Gen Industrial Intelligence Dashboard                                 ║
+╚══════════════════════════════════════════════════════════════════════════════╝
 """
 
 import streamlit as st
@@ -14,337 +13,630 @@ import time
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import warnings
+import matplotlib.patches as patches
+from matplotlib.collections import LineCollection
+import warnings, math
 warnings.filterwarnings("ignore")
 
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
 #  PAGE CONFIG
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
 st.set_page_config(
-    page_title="PredictiveMaint AI · Sarveyasha Sodhiya",
-    page_icon="⚙️",
+    page_title="AXIOM · Predictive Maintenance AI",
+    page_icon="⬡",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# ─────────────────────────────────────────────
-#  FULL CUSTOM CSS
-# ─────────────────────────────────────────────
-st.markdown("""
+# ══════════════════════════════════════════════
+#  MASTER CSS — AXIOM SYSTEM THEME
+# ══════════════════════════════════════════════
+st.markdown(r"""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500&display=swap');
 
+/* ── Design Tokens ─────────────────────── */
 :root {
-    --primary: #00e5ff;
-    --primary-dim: #0097a7;
-    --accent: #ff6b35;
-    --success: #00e676;
-    --warning: #ffea00;
-    --danger: #ff1744;
-    --bg-deep: #020c14;
-    --bg-card: rgba(0,229,255,0.04);
-    --border: rgba(0,229,255,0.18);
-    --border-strong: rgba(0,229,255,0.45);
-    --text-main: #e8f4f8;
-    --text-dim: #7a9baa;
-    --font-display: 'Rajdhani', sans-serif;
-    --font-mono: 'Space Mono', monospace;
-    --font-body: 'Inter', sans-serif;
+  --c-bg:        #050a0f;
+  --c-bg2:       #080f16;
+  --c-bg3:       #0c1520;
+  --c-surface:   rgba(255,255,255,0.028);
+  --c-border:    rgba(255,255,255,0.07);
+  --c-border2:   rgba(255,255,255,0.12);
+  --c-cyan:      #41f4e0;
+  --c-cyan-dim:  rgba(65,244,224,0.18);
+  --c-amber:     #f5a623;
+  --c-red:       #ff4757;
+  --c-green:     #2ecc71;
+  --c-text:      #d4e8f0;
+  --c-muted:     rgba(212,232,240,0.4);
+  --c-dimmer:    rgba(212,232,240,0.18);
+  --f-head:      'Syne', sans-serif;
+  --f-mono:      'DM Mono', monospace;
+  --f-body:      'Inter', sans-serif;
+  --ease-out-expo: cubic-bezier(0.16,1,0.3,1);
 }
 
-*, *::before, *::after { box-sizing: border-box; }
+/* ── Global Reset ───────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; }
 
 html, body,
 [data-testid="stAppViewContainer"],
-[data-testid="stMain"] {
-    background: var(--bg-deep) !important;
-    color: var(--text-main) !important;
-    font-family: var(--font-body) !important;
+[data-testid="stMain"],
+.main, .block-container {
+  background: var(--c-bg) !important;
+  color: var(--c-text) !important;
+  font-family: var(--f-body) !important;
 }
 
-/* scanline overlay */
+.block-container { padding-top: 1.5rem !important; max-width: 1400px !important; }
+
+/* Noise grain overlay */
 [data-testid="stAppViewContainer"]::before {
-    content: '';
-    position: fixed; inset: 0;
-    background: repeating-linear-gradient(
-        0deg, transparent, transparent 2px,
-        rgba(0,229,255,0.012) 2px, rgba(0,229,255,0.012) 4px
-    );
-    pointer-events: none; z-index: 0;
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  background-repeat: repeat; background-size: 128px 128px; opacity: 0.6;
 }
 
+/* Ambient glow orbs */
 [data-testid="stAppViewContainer"]::after {
-    content: '';
-    position: fixed; top:-50%; left:-50%; width:200%; height:200%;
-    background:
-        radial-gradient(ellipse at 20% 50%, rgba(0,100,180,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 20%, rgba(0,200,180,0.06) 0%, transparent 50%);
-    pointer-events: none; z-index: 0;
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background:
+    radial-gradient(ellipse 600px 400px at 15% 20%, rgba(65,244,224,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 350px at 85% 75%, rgba(245,166,35,0.03) 0%, transparent 70%),
+    radial-gradient(ellipse 800px 600px at 50% 110%, rgba(65,244,224,0.025) 0%, transparent 60%);
 }
 
-/* ── Sidebar ── */
+.main > div, section[data-testid="stSidebar"] > div { position: relative; z-index: 1; }
+
+/* ── Sidebar ────────────────────────────── */
 section[data-testid="stSidebar"] {
-    background: linear-gradient(180deg,#030f1a 0%,#020c14 100%) !important;
-    border-right: 1px solid var(--border) !important;
+  background: linear-gradient(180deg, #060d14 0%, #050a0f 100%) !important;
+  border-right: 1px solid var(--c-border) !important;
+  width: 300px !important;
 }
+
+/* Accent stripe top */
 section[data-testid="stSidebar"]::before {
-    content:''; position:absolute; top:0; left:0; right:0; height:3px;
-    background: linear-gradient(90deg, var(--primary), var(--accent), var(--primary));
-    background-size:200%;
-    animation: borderFlow 3s linear infinite;
-}
-@keyframes borderFlow {
-    0%   { background-position: 0%   50%; }
-    100% { background-position: 200% 50%; }
-}
-section[data-testid="stSidebar"] * { color: var(--text-main) !important; font-family: var(--font-body) !important; }
-section[data-testid="stSidebar"] label {
-    font-family: var(--font-display) !important;
-    font-weight: 600 !important; font-size: 13px !important;
-    letter-spacing: 1.5px !important; text-transform: uppercase !important;
-    color: var(--primary) !important;
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%, var(--c-cyan) 30%, var(--c-amber) 70%, transparent 100%);
+  z-index: 10;
 }
 
-/* sliders */
+/* ── Sidebar text overrides ─────────────── */
+section[data-testid="stSidebar"] * { color: var(--c-text) !important; }
+
+section[data-testid="stSidebar"] .stSlider label,
+section[data-testid="stSidebar"] .stSelectbox label {
+  font-family: var(--f-mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 2.5px !important;
+  text-transform: uppercase !important;
+  color: var(--c-muted) !important;
+  font-weight: 400 !important;
+}
+
+/* Slider track */
 .stSlider > div > div > div > div {
-    background: linear-gradient(90deg, var(--primary), var(--primary-dim)) !important;
-}
-.stSlider [data-testid="stTickBarMin"],
-.stSlider [data-testid="stTickBarMax"] {
-    color: var(--text-dim) !important;
-    font-family: var(--font-mono) !important; font-size:11px !important;
+  background: linear-gradient(90deg, var(--c-cyan), rgba(65,244,224,0.4)) !important;
+  border-radius: 99px !important;
 }
 
-/* selectbox */
+/* Selectbox */
 .stSelectbox > div > div {
-    background: rgba(0,229,255,0.06) !important;
-    border: 1px solid var(--border-strong) !important;
-    border-radius: 6px !important;
-    color: var(--text-main) !important;
-    font-family: var(--font-mono) !important;
+  background: rgba(65,244,224,0.04) !important;
+  border: 1px solid rgba(65,244,224,0.2) !important;
+  border-radius: 4px !important;
+  font-family: var(--f-mono) !important;
+  font-size: 13px !important;
 }
 
-.main > div { position:relative; z-index:1; }
-
-/* ── Cards ── */
-.card {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px; padding: 28px 32px; margin-bottom: 20px;
-    position:relative; overflow:hidden;
-    animation: fadeUp 0.6s ease both;
-}
-.card::before {
-    content:''; position:absolute; top:0; left:0; right:0; height:1px;
-    background: linear-gradient(90deg, transparent, var(--primary-dim), transparent);
-}
-@keyframes fadeUp {
-    from { opacity:0; transform:translateY(16px); }
-    to   { opacity:1; transform:translateY(0); }
+/* ── Main Typography ─────────────────────── */
+h1, h2, h3 {
+  font-family: var(--f-head) !important;
+  color: var(--c-text) !important;
+  font-weight: 700 !important;
 }
 
-/* ── Hero ── */
-.hero {
-    background: linear-gradient(135deg,rgba(0,229,255,0.05) 0%,rgba(255,107,53,0.04) 100%);
-    border:1px solid var(--border); border-radius:16px;
-    padding:36px 40px; margin-bottom:28px;
-    position:relative; overflow:hidden;
-    animation: fadeUp 0.5s ease both;
-}
-.hero::after {
-    content:'⚙'; position:absolute; right:40px; top:50%;
-    transform:translateY(-50%);
-    font-size:120px; opacity:0.04;
-    animation:spin 20s linear infinite; color:var(--primary);
-}
-@keyframes spin {
-    from { transform:translateY(-50%) rotate(0deg); }
-    to   { transform:translateY(-50%) rotate(360deg); }
-}
-.hero-title {
-    font-family:var(--font-display) !important; font-size:3rem !important;
-    font-weight:700 !important; letter-spacing:3px !important; text-transform:uppercase !important;
-    color:var(--primary) !important; margin:0 0 4px !important; line-height:1.1 !important;
-    text-shadow:0 0 40px rgba(0,229,255,0.4) !important;
-}
-.hero-subtitle {
-    font-family:var(--font-mono) !important; font-size:0.8rem !important;
-    color:var(--text-dim) !important; letter-spacing:2px !important; margin:0 !important;
-}
-.hero-byline {
-    display:inline-block; margin-top:16px;
-    font-family:var(--font-mono) !important; font-size:0.72rem !important;
-    color:var(--accent) !important; letter-spacing:1.5px !important;
-    border:1px solid rgba(255,107,53,0.4); padding:4px 14px; border-radius:4px;
-    background:rgba(255,107,53,0.07);
+p, span, div, label, li { color: var(--c-text) !important; }
+
+/* ── AXIOM HERO ──────────────────────────── */
+.axiom-hero {
+  position: relative;
+  padding: 44px 48px 40px;
+  margin-bottom: 28px;
+  overflow: hidden;
+  border: 1px solid var(--c-border);
+  border-radius: 2px;
+  background: var(--c-surface);
 }
 
-/* ── Section title ── */
-.section-title {
-    font-family:var(--font-display) !important; font-size:1.15rem !important;
-    font-weight:600 !important; letter-spacing:2.5px !important; text-transform:uppercase !important;
-    color:var(--primary) !important; margin:0 0 20px !important;
-    display:flex; align-items:center; gap:10px;
+/* Corner brackets */
+.axiom-hero::before, .axiom-hero::after {
+  content: '';
+  position: absolute;
+  width: 28px; height: 28px;
+  border-color: var(--c-cyan);
+  border-style: solid;
 }
-.section-title::after {
-    content:''; flex:1; height:1px;
-    background:linear-gradient(90deg, var(--border-strong), transparent);
+.axiom-hero::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; }
+.axiom-hero::after  { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; }
+
+.axiom-eyebrow {
+  font-family: var(--f-mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 4px !important;
+  text-transform: uppercase !important;
+  color: var(--c-cyan) !important;
+  margin-bottom: 14px !important;
+  display: flex; align-items: center; gap: 10px;
 }
 
-h1,h2,h3 { font-family:var(--font-display) !important; color:var(--primary) !important; }
-p,span,div,li { color:var(--text-main) !important; }
-
-/* ── Metric boxes ── */
-.metric-box {
-    background:rgba(0,229,255,0.04); border:1px solid var(--border);
-    border-radius:10px; padding:18px 20px; position:relative; overflow:hidden;
-    animation:fadeUp 0.7s ease both;
-}
-.metric-box::before {
-    content:''; position:absolute; bottom:0; left:0; right:0; height:2px;
-    background:linear-gradient(90deg,var(--primary),var(--accent));
-    transform:scaleX(0); transition:transform 0.3s; transform-origin:left;
-}
-.metric-box:hover::before { transform:scaleX(1); }
-.metric-label {
-    font-family:var(--font-mono) !important; font-size:0.65rem !important;
-    letter-spacing:1.8px !important; color:var(--text-dim) !important;
-    text-transform:uppercase !important; margin-bottom:8px;
-}
-.metric-value {
-    font-family:var(--font-display) !important; font-size:1.8rem !important;
-    font-weight:700 !important; color:var(--primary) !important; line-height:1 !important;
-}
-.metric-delta {
-    font-family:var(--font-mono) !important; font-size:0.7rem !important; margin-top:6px;
+.axiom-eyebrow::before {
+  content: '';
+  display: inline-block; width: 24px; height: 1px;
+  background: var(--c-cyan);
 }
 
-/* ── Status pills ── */
-.status-pill {
-    display:inline-flex; align-items:center; gap:8px;
-    padding:10px 20px; border-radius:6px;
-    font-family:var(--font-display) !important; font-size:1.05rem !important;
-    font-weight:600 !important; letter-spacing:2px !important; text-transform:uppercase !important;
-}
-.status-ok   { background:rgba(0,230,118,0.1); border:1px solid rgba(0,230,118,0.5); color:var(--success) !important; }
-.status-fail { background:rgba(255,23,68,0.1);  border:1px solid rgba(255,23,68,0.5);  color:var(--danger)  !important;
-               animation:pulse-red 1.5s infinite; }
-@keyframes pulse-red {
-    0%,100% { box-shadow:0 0 0 0 rgba(255,23,68,0.0); }
-    50%     { box-shadow:0 0 0 8px rgba(255,23,68,0.15); }
+.axiom-title {
+  font-family: var(--f-head) !important;
+  font-size: clamp(2.2rem, 4vw, 3.4rem) !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  letter-spacing: -1.5px !important;
+  color: #ffffff !important;
+  margin-bottom: 6px !important;
 }
 
-/* ── Sensor status dots ── */
-.dot-ok   { display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--success); box-shadow:0 0 6px var(--success); }
-.dot-warn { display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--warning); box-shadow:0 0 6px var(--warning); animation:blink 1s infinite; }
-.dot-crit { display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--danger);  box-shadow:0 0 6px var(--danger);  animation:blink 0.6s infinite; }
-@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
-
-/* ── Feature importance bars ── */
-.feat-row { margin-bottom:14px; }
-.feat-label {
-    display:flex; justify-content:space-between;
-    font-family:var(--font-mono) !important; font-size:0.72rem !important;
-    color:var(--text-dim) !important; margin-bottom:5px;
-}
-.feat-bar-bg { height:6px; background:rgba(255,255,255,0.07); border-radius:3px; overflow:hidden; }
-.feat-bar-fill {
-    height:100%; border-radius:3px;
-    background:linear-gradient(90deg,var(--primary),var(--accent));
-    transition:width 1s ease;
+.axiom-title span {
+  color: var(--c-cyan) !important;
+  -webkit-text-stroke: 0 !important;
 }
 
-/* ── History table ── */
-.hist-row {
-    display:grid; grid-template-columns:1.5fr 1fr 1fr 1fr; gap:8px;
-    padding:10px 0; border-bottom:1px solid rgba(0,229,255,0.08);
-    font-family:var(--font-mono) !important; font-size:0.72rem !important;
-    color:var(--text-dim) !important; align-items:center;
-}
-.hist-header { color:var(--primary) !important; font-weight:700 !important; border-bottom:1px solid var(--border-strong) !important; letter-spacing:1.5px; }
-
-/* ── Action items ── */
-.action-item { display:flex; align-items:flex-start; gap:14px; padding:14px 0; border-bottom:1px solid rgba(0,229,255,0.07); }
-.action-icon { width:36px; height:36px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
-.action-crit { background:rgba(255,23,68,0.12);  border:1px solid rgba(255,23,68,0.3); }
-.action-warn { background:rgba(255,234,0,0.10);  border:1px solid rgba(255,234,0,0.3); }
-.action-ok   { background:rgba(0,230,118,0.08);  border:1px solid rgba(0,230,118,0.3); }
-.action-title  { font-family:var(--font-display) !important; font-size:0.95rem !important; font-weight:600 !important; letter-spacing:0.5px !important; margin-bottom:2px; }
-.action-desc   { font-size:0.78rem !important; color:var(--text-dim) !important; }
-
-/* ── Sidebar brand ── */
-.sidebar-brand {
-    font-family:var(--font-display) !important; font-size:1.1rem !important;
-    font-weight:700 !important; letter-spacing:3px !important; text-transform:uppercase !important;
-    color:var(--primary) !important; text-align:center;
-    padding:10px 0 20px; border-bottom:1px solid var(--border); margin-bottom:20px;
-    text-shadow:0 0 20px rgba(0,229,255,0.5);
-}
-.sidebar-developer {
-    font-family:var(--font-mono) !important; font-size:0.65rem !important;
-    color:var(--accent) !important; text-align:center; letter-spacing:1px;
-    margin-top:-12px; margin-bottom:22px;
+.axiom-sub {
+  font-family: var(--f-mono) !important;
+  font-size: 11px !important;
+  letter-spacing: 1.5px !important;
+  color: var(--c-muted) !important;
+  margin-top: 12px !important;
 }
 
-/* ── Button ── */
+.axiom-tag {
+  display: inline-flex; align-items: center; gap: 7px;
+  margin-top: 20px;
+  padding: 6px 14px 6px 10px;
+  border: 1px solid rgba(245,166,35,0.3);
+  border-radius: 2px;
+  background: rgba(245,166,35,0.05);
+  font-family: var(--f-mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 2px !important;
+  color: var(--c-amber) !important;
+  text-transform: uppercase !important;
+}
+
+.axiom-tag::before {
+  content: '◈';
+  font-size: 12px;
+  color: var(--c-amber);
+}
+
+/* Hero grid decoration */
+.hero-grid-deco {
+  position: absolute;
+  right: 48px; top: 50%; transform: translateY(-50%);
+  width: 180px; height: 140px;
+  opacity: 0.08;
+}
+
+/* ── KPI Tiles ───────────────────────────── */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.kpi-tile {
+  position: relative;
+  padding: 20px 22px 18px;
+  border: 1px solid var(--c-border);
+  border-radius: 2px;
+  background: var(--c-surface);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.kpi-tile:hover { border-color: rgba(65,244,224,0.25); }
+
+.kpi-tile::after {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 2px;
+  background: var(--c-cyan);
+  transform: scaleY(0); transform-origin: bottom;
+  transition: transform 0.3s var(--ease-out-expo);
+}
+
+.kpi-tile:hover::after { transform: scaleY(1); }
+
+.kpi-label {
+  font-family: var(--f-mono) !important;
+  font-size: 9px !important;
+  letter-spacing: 2.5px !important;
+  text-transform: uppercase !important;
+  color: var(--c-dimmer) !important;
+  margin-bottom: 10px;
+}
+
+.kpi-val {
+  font-family: var(--f-head) !important;
+  font-size: 2rem !important;
+  font-weight: 800 !important;
+  line-height: 1 !important;
+  color: #fff !important;
+  letter-spacing: -1px !important;
+}
+
+.kpi-badge {
+  display: inline-block;
+  margin-top: 8px;
+  font-family: var(--f-mono) !important;
+  font-size: 9px !important;
+  letter-spacing: 1.5px !important;
+  padding: 2px 8px;
+  border-radius: 1px;
+}
+
+.badge-ok   { background: rgba(46,204,113,0.1);  color: var(--c-green) !important; border: 1px solid rgba(46,204,113,0.25); }
+.badge-warn { background: rgba(245,166,35,0.1);  color: var(--c-amber) !important; border: 1px solid rgba(245,166,35,0.25); }
+.badge-crit { background: rgba(255,71,87,0.1);   color: var(--c-red)   !important; border: 1px solid rgba(255,71,87,0.25);  }
+.badge-info { background: rgba(65,244,224,0.07); color: var(--c-cyan)  !important; border: 1px solid rgba(65,244,224,0.2); }
+
+/* ── Panel Cards ─────────────────────────── */
+.panel {
+  position: relative;
+  border: 1px solid var(--c-border);
+  border-radius: 2px;
+  background: var(--c-surface);
+  padding: 28px 30px 26px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.panel::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(65,244,224,0.3), transparent);
+}
+
+/* corner deco */
+.panel::after {
+  content: '';
+  position: absolute; top: -1px; right: -1px;
+  width: 16px; height: 16px;
+  border-top: 1px solid var(--c-cyan);
+  border-right: 1px solid var(--c-cyan);
+}
+
+.panel-label {
+  font-family: var(--f-mono) !important;
+  font-size: 9px !important;
+  letter-spacing: 3px !important;
+  text-transform: uppercase !important;
+  color: var(--c-cyan) !important;
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+
+.panel-label::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: linear-gradient(90deg, var(--c-border2), transparent);
+}
+
+/* ── Gauge SVG wrapper ───────────────────── */
+.gauge-outer {
+  display: flex; flex-direction: column;
+  align-items: center; padding: 8px 0 4px;
+}
+
+/* ── Sensor status rows ──────────────────── */
+.sensor-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 14px;
+  margin-bottom: 6px;
+  border: 1px solid var(--c-border);
+  border-radius: 2px;
+  background: rgba(255,255,255,0.015);
+  transition: background 0.15s;
+}
+.sensor-row:hover { background: rgba(65,244,224,0.04); }
+
+.sensor-name-lbl {
+  font-family: var(--f-mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 1.5px !important;
+  color: var(--c-muted) !important;
+  text-transform: uppercase !important;
+}
+
+.sensor-val-lbl {
+  font-family: var(--f-mono) !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+
+/* ── Feature bars ────────────────────────── */
+.feat-item { margin-bottom: 15px; }
+
+.feat-meta {
+  display: flex; justify-content: space-between;
+  font-family: var(--f-mono) !important;
+  font-size: 10px !important;
+  color: var(--c-muted) !important;
+  margin-bottom: 6px;
+  letter-spacing: 0.5px;
+}
+
+.feat-track {
+  height: 3px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.feat-fill {
+  height: 100%; border-radius: 99px;
+  background: linear-gradient(90deg, var(--c-cyan), rgba(65,244,224,0.5));
+  transition: width 0.8s var(--ease-out-expo);
+}
+
+/* ── Action list ─────────────────────────── */
+.action-block {
+  display: flex; gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.action-block:last-child { border-bottom: none; }
+
+.action-icon-wrap {
+  width: 36px; height: 36px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 2px; font-size: 15px;
+}
+
+.ai-crit { background: rgba(255,71,87,0.1);   border: 1px solid rgba(255,71,87,0.25); }
+.ai-warn { background: rgba(245,166,35,0.1);  border: 1px solid rgba(245,166,35,0.25); }
+.ai-ok   { background: rgba(46,204,113,0.08); border: 1px solid rgba(46,204,113,0.2); }
+
+.action-title-txt {
+  font-family: var(--f-head) !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  margin-bottom: 3px;
+}
+
+.action-desc-txt {
+  font-family: var(--f-mono) !important;
+  font-size: 10px !important;
+  color: var(--c-muted) !important;
+  line-height: 1.6 !important;
+  letter-spacing: 0.3px !important;
+}
+
+/* ── History table ───────────────────────── */
+.hist-head, .hist-row-item {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 1fr 0.9fr;
+  gap: 8px;
+  padding: 9px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-family: var(--f-mono) !important;
+  font-size: 10px !important;
+  align-items: center;
+}
+
+.hist-head {
+  letter-spacing: 2px !important;
+  color: rgba(65,244,224,0.6) !important;
+  text-transform: uppercase !important;
+  border-bottom-color: rgba(65,244,224,0.12) !important;
+}
+
+.hist-row-item { color: var(--c-muted) !important; }
+
+/* ── Prediction result banner ────────────── */
+.pred-banner {
+  display: flex; align-items: center; justify-content: center; gap: 14px;
+  padding: 16px 24px; margin-bottom: 22px; border-radius: 2px;
+  font-family: var(--f-head) !important;
+  font-size: 1.1rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.5px !important;
+  text-transform: uppercase !important;
+}
+
+.pred-banner.ok   { background: rgba(46,204,113,0.06); border: 1px solid rgba(46,204,113,0.3); color: var(--c-green) !important; }
+.pred-banner.fail { background: rgba(255,71,87,0.08);  border: 1px solid rgba(255,71,87,0.4);  color: var(--c-red)   !important;
+                    animation: flicker-red 2.5s ease infinite; }
+
+@keyframes flicker-red {
+  0%,100% { box-shadow: 0 0 0 0 transparent; }
+  50%     { box-shadow: 0 0 20px rgba(255,71,87,0.12), inset 0 0 20px rgba(255,71,87,0.04); }
+}
+
+/* ── Confidence block ────────────────────── */
+.conf-block {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 14px; border: 1px solid var(--c-border); border-radius: 2px;
+  background: rgba(65,244,224,0.02); margin-top: 14px;
+  gap: 4px;
+}
+
+.conf-lbl {
+  font-family: var(--f-mono) !important; font-size: 9px !important;
+  letter-spacing: 2.5px !important; color: var(--c-dimmer) !important;
+  text-transform: uppercase !important;
+}
+
+.conf-val {
+  font-family: var(--f-head) !important; font-size: 1.6rem !important;
+  font-weight: 800 !important; color: var(--c-cyan) !important;
+  letter-spacing: -0.5px !important;
+}
+
+/* ── Button ──────────────────────────────── */
 .stButton > button {
-    width:100% !important; background:transparent !important;
-    color:var(--primary) !important; border:1.5px solid var(--primary) !important;
-    border-radius:8px !important; font-family:var(--font-display) !important;
-    font-size:1rem !important; font-weight:700 !important;
-    letter-spacing:3px !important; text-transform:uppercase !important;
-    padding:14px !important; transition:all 0.25s !important;
+  width: 100% !important;
+  background: transparent !important;
+  color: var(--c-cyan) !important;
+  border: 1px solid rgba(65,244,224,0.5) !important;
+  border-radius: 2px !important;
+  font-family: var(--f-mono) !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  letter-spacing: 3px !important;
+  text-transform: uppercase !important;
+  padding: 14px !important;
+  transition: all 0.2s !important;
+  position: relative !important;
 }
+
 .stButton > button:hover {
-    box-shadow:0 0 25px rgba(0,229,255,0.3), inset 0 0 25px rgba(0,229,255,0.07) !important;
-    transform:translateY(-1px) !important;
+  background: rgba(65,244,224,0.06) !important;
+  box-shadow: 0 0 30px rgba(65,244,224,0.12) !important;
+  border-color: var(--c-cyan) !important;
 }
 
-/* ── Footer ── */
-.footer { text-align:center; padding:32px 0 16px; border-top:1px solid var(--border); margin-top:40px; }
-.footer-text { font-family:var(--font-mono) !important; font-size:0.7rem !important; color:var(--text-dim) !important; letter-spacing:1.5px !important; }
-.footer-name { color:var(--accent) !important; font-weight:700 !important; }
+.stButton > button:active {
+  transform: scale(0.99) !important;
+  background: rgba(65,244,224,0.1) !important;
+}
 
-/* ── Streamlit overrides ── */
-[data-testid="stMarkdownContainer"] p { font-size:0.88rem !important; color:var(--text-main) !important; }
-[data-testid="stMetric"] { background:var(--bg-card) !important; border:1px solid var(--border) !important; border-radius:10px !important; padding:12px 16px !important; }
-[data-testid="metric-container"] * { color:var(--text-main) !important; }
-.stProgress > div > div { background:linear-gradient(90deg,var(--primary),var(--accent)) !important; border-radius:4px !important; }
-.stProgress { background:rgba(255,255,255,0.06) !important; border-radius:4px !important; }
-[data-testid="stSpinner"] p { color:var(--primary) !important; font-family:var(--font-mono) !important; }
-hr { border-color:var(--border) !important; margin:24px 0 !important; }
+/* ── Dividers ────────────────────────────── */
+hr { border: none !important; border-top: 1px solid var(--c-border) !important; margin: 16px 0 !important; }
+
+/* ── Progress ────────────────────────────── */
+.stProgress > div > div { background: var(--c-cyan) !important; border-radius: 1px !important; }
+.stProgress { background: rgba(255,255,255,0.05) !important; border-radius: 1px !important; height: 3px !important; }
+[data-testid="stSpinner"] p { font-family: var(--f-mono) !important; font-size: 11px !important; letter-spacing: 2px !important; color: var(--c-cyan) !important; }
+
+/* ── Footer ──────────────────────────────── */
+.axiom-footer {
+  text-align: center; padding: 36px 0 20px;
+  border-top: 1px solid var(--c-border); margin-top: 40px;
+}
+.axiom-footer-main {
+  font-family: var(--f-mono) !important; font-size: 11px !important;
+  color: var(--c-dimmer) !important; letter-spacing: 2px !important;
+}
+.axiom-footer-dev { color: var(--c-amber) !important; font-weight: 500 !important; }
+.axiom-footer-sub {
+  margin-top: 8px;
+  font-family: var(--f-mono) !important; font-size: 9px !important;
+  color: rgba(255,255,255,0.1) !important; letter-spacing: 1.5px !important;
+}
+
+/* ── Sidebar brand block ─────────────────── */
+.sb-brand {
+  padding: 20px 0 18px;
+  border-bottom: 1px solid var(--c-border);
+  margin-bottom: 18px;
+  text-align: left;
+}
+
+.sb-logo {
+  font-family: var(--f-head) !important;
+  font-size: 1.25rem !important; font-weight: 800 !important;
+  letter-spacing: 3px !important; text-transform: uppercase !important;
+  color: #fff !important;
+}
+
+.sb-logo span { color: var(--c-cyan) !important; }
+
+.sb-dev {
+  font-family: var(--f-mono) !important; font-size: 9px !important;
+  color: var(--c-amber) !important; letter-spacing: 2.5px !important;
+  margin-top: 5px; text-transform: uppercase;
+}
+
+/* ── Empty state ─────────────────────────── */
+.empty-state {
+  text-align: center; padding: 70px 0 50px;
+}
+.empty-state-icon {
+  font-size: 52px; opacity: 0.07; margin-bottom: 20px;
+  animation: slow-pulse 4s ease infinite;
+}
+@keyframes slow-pulse {
+  0%,100% { opacity: 0.07; } 50% { opacity: 0.13; }
+}
+.empty-state-msg {
+  font-family: var(--f-mono) !important; font-size: 11px !important;
+  color: rgba(65,244,224,0.25) !important; letter-spacing: 2px !important;
+  line-height: 2 !important; text-transform: uppercase !important;
+}
+
+/* ── Matplotlib chart containers ─────────── */
+.stPyplot > div, [data-testid="stImage"] {
+  background: transparent !important;
+}
+
+/* Hide streamlit chrome */
+[data-testid="stToolbar"], .stDeployButton,
+footer, #MainMenu { display: none !important; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--c-bg); }
+::-webkit-scrollbar-thumb { background: rgba(65,244,224,0.2); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(65,244,224,0.4); }
 </style>
 """, unsafe_allow_html=True)
 
 
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
 #  CONSTANTS
-# ─────────────────────────────────────────────
-SAFE_RANGES = {
-    "Air Temp (K)":      (295, 308),
-    "Process Temp (K)":  (305, 335),
-    "RPM":               (1200, 2500),
-    "Torque (Nm)":       (20, 60),
-    "Tool Wear (min)":   (0, 200),
+# ══════════════════════════════════════════════
+SAFE = {
+    "Air Temp (K)":     (295, 308),
+    "Process Temp (K)": (305, 335),
+    "RPM":              (1200, 2500),
+    "Torque (Nm)":      (20, 60),
+    "Tool Wear (min)":  (0, 200),
 }
-FEATURE_NAMES = ["Air Temp", "Process Temp", "RPM", "Torque", "Tool Wear", "Type_L", "Type_M"]
-SENSOR_MINS   = [290, 300, 1000, 10, 0]
-SENSOR_MAXS   = [320, 350, 3000, 80, 300]
-SENSOR_KEYS   = ["Air Temp (K)", "Process Temp (K)", "RPM", "Torque (Nm)", "Tool Wear (min)"]
-SENSOR_LABELS = ["Air Temp", "Process Temp", "RPM", "Torque", "Tool Wear"]
+FT_NAMES   = ["Air Temp", "Proc Temp", "RPM", "Torque", "Tool Wear", "Type_L", "Type_M"]
+S_LABELS   = ["Air Temp", "Proc Temp", "RPM", "Torque", "Tool Wear"]
+S_KEYS     = list(SAFE.keys())
+S_MINS     = [290, 300, 1000, 10,  0]
+S_MAXS     = [320, 350, 3000, 80, 300]
+
+# matplotlib theme colours (as valid tuples only)
+M_BG    = (5/255, 10/255, 15/255, 1.0)
+M_CYAN  = (65/255, 244/255, 224/255, 1.0)
+M_AMBER = (245/255, 166/255, 35/255, 1.0)
+M_RED   = (255/255, 71/255, 87/255, 1.0)
+M_GREEN = (46/255, 204/255, 113/255, 1.0)
+M_GRID  = (1.0, 1.0, 1.0, 0.05)
+M_BORD  = (1.0, 1.0, 1.0, 0.07)
+M_TEXT  = (212/255, 232/255, 240/255, 0.45)
+M_SURF  = (255/255, 255/255, 255/255, 0.03)
 
 
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
 #  SESSION STATE
-# ─────────────────────────────────────────────
-if "history"         not in st.session_state: st.session_state.history         = []
-if "last_prediction" not in st.session_state: st.session_state.last_prediction = None
-if "analysis_run"    not in st.session_state: st.session_state.analysis_run    = False
+# ══════════════════════════════════════════════
+for k, v in [("history", []), ("last_pred", None), ("ran", False)]:
+    if k not in st.session_state:
+        st.session_state[k] = v
 
 
-# ─────────────────────────────────────────────
-#  LOAD MODEL
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
+#  MODEL LOADER
+# ══════════════════════════════════════════════
 @st.cache_resource
 def load_model():
     try:
@@ -355,179 +647,178 @@ def load_model():
 model = load_model()
 
 
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
 #  HELPERS
-# ─────────────────────────────────────────────
-def get_sensor_status(value, safe_min, safe_max):
-    pct = (value - safe_min) / max(safe_max - safe_min, 1)
-    if value < safe_min or value > safe_max:
-        return "crit", "#ff1744"
-    elif pct < 0.1 or pct > 0.85:
-        return "warn", "#ffea00"
-    return "ok", "#00e676"
+# ══════════════════════════════════════════════
+def sensor_status(val, lo, hi):
+    pct = (val - lo) / max(hi - lo, 1)
+    if val < lo or val > hi:          return "crit", M_RED,   "#ff4757"
+    elif pct > 0.85 or pct < 0.1:    return "warn", M_AMBER, "#f5a623"
+    return "ok", M_GREEN, "#2ecc71"
 
 
-def gauge_html(prob: float) -> str:
-    pct = prob * 100
-    r   = 70
-    cx = cy = 90
-    circ = 2 * 3.14159265 * r
+def gauge_svg(prob: float) -> str:
+    pct  = prob * 100
+    r, cx, cy = 68, 88, 88
+    circ = 2 * math.pi * r
     dash = circ * prob
     gap  = circ - dash
-    if   pct < 30: color, label = "#00e676", "LOW RISK"
-    elif pct < 70: color, label = "#ffea00", "MODERATE"
-    else:          color, label = "#ff1744", "HIGH RISK"
+    if pct < 30:   color, label = "#41f4e0", "NOMINAL"
+    elif pct < 70: color, label = "#f5a623", "CAUTION"
+    else:          color, label = "#ff4757", "CRITICAL"
+
+    # tick marks
+    ticks = ""
+    for i in range(0, 360, 30):
+        rad = math.radians(i - 90)
+        r1, r2 = 80, 85
+        x1, y1 = cx + r1*math.cos(rad), cy + r1*math.sin(rad)
+        x2, y2 = cx + r2*math.cos(rad), cy + r2*math.sin(rad)
+        ticks += f'<line x1="{x1:.1f}" y1="{y1:.1f}" x2="{x2:.1f}" y2="{y2:.1f}" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>'
+
     return f"""
-    <div style="display:flex;flex-direction:column;align-items:center;padding:10px 0;">
-      <svg width="180" height="180" viewBox="0 0 180 180">
+    <div class="gauge-outer">
+      <svg width="176" height="176" viewBox="0 0 176 176">
         <defs>
-          <filter id="glow2">
-            <feGaussianBlur stdDeviation="4" result="cb"/>
+          <filter id="glow-g">
+            <feGaussianBlur stdDeviation="3" result="cb"/>
             <feMerge><feMergeNode in="cb"/><feMergeNode in="SourceGraphic"/></feMerge>
           </filter>
         </defs>
+        <!-- outer ring faint -->
+        <circle cx="{cx}" cy="{cy}" r="84" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+        <!-- tick marks -->
+        {ticks}
+        <!-- track -->
         <circle cx="{cx}" cy="{cy}" r="{r}" fill="none"
-                stroke="rgba(255,255,255,0.07)" stroke-width="10"/>
+                stroke="rgba(255,255,255,0.06)" stroke-width="8"/>
+        <!-- value arc -->
         <circle cx="{cx}" cy="{cy}" r="{r}" fill="none"
-                stroke="{color}" stroke-width="10" stroke-linecap="round"
+                stroke="{color}" stroke-width="8" stroke-linecap="butt"
                 stroke-dasharray="{dash:.2f} {gap:.2f}"
                 transform="rotate(-90 {cx} {cy})"
-                filter="url(#glow2)"/>
-        <text x="{cx}" y="{cy-10}" text-anchor="middle"
-              font-family="Rajdhani,sans-serif" font-size="28" font-weight="700"
+                filter="url(#glow-g)"/>
+        <!-- center bg -->
+        <circle cx="{cx}" cy="{cy}" r="54" fill="rgba(5,10,15,0.9)"/>
+        <!-- percentage -->
+        <text x="{cx}" y="{cy - 6}" text-anchor="middle"
+              font-family="Syne,sans-serif" font-size="26" font-weight="800"
               fill="{color}">{pct:.0f}%</text>
-        <text x="{cx}" y="{cy+14}" text-anchor="middle"
-              font-family="Space Mono,monospace" font-size="9"
-              fill="rgba(255,255,255,0.45)">FAILURE PROB</text>
-        <text x="{cx}" y="{cy+30}" text-anchor="middle"
-              font-family="Rajdhani,sans-serif" font-size="11" font-weight="700"
-              fill="{color}" letter-spacing="2">{label}</text>
+        <!-- small label -->
+        <text x="{cx}" y="{cy + 13}" text-anchor="middle"
+              font-family="DM Mono,monospace" font-size="8" letter-spacing="2"
+              fill="rgba(212,232,240,0.35)">FAILURE PROB</text>
+        <text x="{cx}" y="{cy + 28}" text-anchor="middle"
+              font-family="Syne,sans-serif" font-size="10" font-weight="700"
+              fill="{color}" letter-spacing="2.5">{label}</text>
       </svg>
     </div>"""
 
 
-def feature_importance_html(importances: dict) -> str:
-    max_val = max(importances.values()) if importances else 1
-    rows = ""
-    for name, val in sorted(importances.items(), key=lambda x: x[1], reverse=True):
-        pct = (val / max_val) * 100
-        rows += f"""
-        <div class="feat-row">
-          <div class="feat-label">
-            <span>{name}</span>
-            <span style="color:#00e5ff;">{val:.3f}</span>
-          </div>
-          <div class="feat-bar-bg">
-            <div class="feat-bar-fill" style="width:{pct:.1f}%;"></div>
-          </div>
+def feature_bars_html(imp: dict) -> str:
+    mx = max(imp.values()) if imp else 1
+    html = ""
+    for name, val in sorted(imp.items(), key=lambda x: -x[1]):
+        pct = (val / mx) * 100
+        html += f"""
+        <div class="feat-item">
+          <div class="feat-meta"><span>{name}</span>
+          <span style="color:#41f4e0;">{val:.4f}</span></div>
+          <div class="feat-track"><div class="feat-fill" style="width:{pct:.1f}%;"></div></div>
         </div>"""
-    return f'<div style="padding:4px 0;">{rows}</div>'
+    return html
 
 
-def recommendations_html(sensor_vals: dict) -> str:
+def actions_html(sv: dict) -> str:
     items = []
-    tw = sensor_vals.get("Tool Wear (min)", 0)
+    tw = sv.get("Tool Wear (min)", 0)
     if tw > 200:
-        items.append(("crit","🔧","Replace Tool Immediately",
-                       f"Tool wear at {tw} min — exceeds 200 min safe limit. Immediate replacement required."))
+        items.append(("crit","🔧","Replace Cutting Tool","Wear at {tw} min exceeds 200 min threshold. Immediate swap required to prevent spindle damage.".format(tw=tw)))
     elif tw > 160:
-        items.append(("warn","🔧","Schedule Tool Replacement",
-                       f"Tool wear at {tw} min — approaching limit. Plan replacement within 24 h."))
+        items.append(("warn","🔧","Schedule Tool Replacement","Wear at {tw} min — 80% of service life consumed. Plan swap within next shift.".format(tw=tw)))
     else:
-        items.append(("ok","🔧","Tool Condition Normal",
-                       f"Tool wear at {tw} min — within safe operating range."))
+        items.append(("ok","🔧","Tool Condition Nominal","Wear at {tw} min — well within 200 min operating limit.".format(tw=tw)))
 
-    rpm = sensor_vals.get("RPM", 0)
-    if rpm > 2500:
-        items.append(("crit","⚡","Reduce Rotational Speed",
-                       f"RPM at {rpm} — exceeds 2 500 rpm threshold. Reduce load immediately."))
-    elif rpm > 2200:
-        items.append(("warn","⚡","Monitor Rotational Speed",
-                       f"RPM at {rpm} — nearing upper threshold. Monitor closely."))
+    rpm_val = sv.get("RPM", 0)
+    if rpm_val > 2500:
+        items.append(("crit","⚡","Overspeed Condition","RPM at {r} exceeds 2 500 limit. Reduce drive frequency immediately.".format(r=rpm_val)))
+    elif rpm_val > 2200:
+        items.append(("warn","⚡","Speed Approaching Limit","RPM at {r} — within 12% of ceiling. Monitor thermal rise.".format(r=rpm_val)))
     else:
-        items.append(("ok","⚡","Speed Within Range",
-                       f"RPM at {rpm} — nominal operating range."))
+        items.append(("ok","⚡","Rotational Speed Normal","RPM at {r} — within nominal operating band.".format(r=rpm_val)))
 
-    torque = sensor_vals.get("Torque (Nm)", 0)
-    if torque > 65:
-        items.append(("crit","🌀","Torque Overload Detected",
-                       f"Torque at {torque} Nm — exceeds 65 Nm. Inspect drive train now."))
-    elif torque > 55:
-        items.append(("warn","🌀","Elevated Torque",
-                       f"Torque at {torque} Nm — slightly elevated. Monitor drive components."))
+    tq = sv.get("Torque (Nm)", 0)
+    if tq > 65:
+        items.append(("crit","🌀","Torque Overload","Torque at {t} Nm exceeds 65 Nm rating. Inspect gearbox and coupling alignment.".format(t=tq)))
+    elif tq > 55:
+        items.append(("warn","🌀","Elevated Drive Torque","Torque at {t} Nm — check feed rate and workpiece hardness.".format(t=tq)))
     else:
-        items.append(("ok","🌀","Torque Normal",
-                       f"Torque at {torque} Nm — within specification."))
+        items.append(("ok","🌀","Drive Torque Normal","Torque at {t} Nm — within specification.".format(t=tq)))
 
-    dT = sensor_vals.get("Process Temp (K)", 310) - sensor_vals.get("Air Temp (K)", 300)
+    dT = sv.get("Process Temp (K)", 310) - sv.get("Air Temp (K)", 300)
     if dT > 12:
-        items.append(("crit","🌡","Thermal Differential Alert",
-                       f"ΔT = {dT:.1f} K — excess heat build-up. Check cooling system."))
+        items.append(("crit","🌡","Critical Thermal Delta","ΔT = {d:.1f} K — cooling circuit likely degraded. Halt and inspect.".format(d=dT)))
     elif dT > 9:
-        items.append(("warn","🌡","Elevated Temperature Delta",
-                       f"ΔT = {dT:.1f} K — monitor heat dissipation."))
+        items.append(("warn","🌡","Elevated Thermal Delta","ΔT = {d:.1f} K — monitor coolant flow rate.".format(d=dT)))
     else:
-        items.append(("ok","🌡","Thermal Levels Normal",
-                       f"ΔT = {dT:.1f} K — heat balance acceptable."))
+        items.append(("ok","🌡","Thermal Balance Normal","ΔT = {d:.1f} K — heat transfer within design limits.".format(d=dT)))
 
     html = ""
     for sev, icon, title, desc in items:
-        col = "#ff1744" if sev=="crit" else "#ffea00" if sev=="warn" else "#00e676"
+        col = "#ff4757" if sev=="crit" else "#f5a623" if sev=="warn" else "#2ecc71"
         html += f"""
-        <div class="action-item">
-          <div class="action-icon action-{sev}">{icon}</div>
+        <div class="action-block">
+          <div class="action-icon-wrap ai-{sev}">{icon}</div>
           <div>
-            <div class="action-title" style="color:{col};">{title}</div>
-            <div class="action-desc">{desc}</div>
+            <div class="action-title-txt" style="color:{col};">{title}</div>
+            <div class="action-desc-txt">{desc}</div>
           </div>
         </div>"""
     return html
 
 
-def history_table_html(history: list) -> str:
+def history_html(history: list) -> str:
     if not history:
-        return ('<p style="color:rgba(255,255,255,0.3);font-size:0.78rem;'
-                'font-family:\'Space Mono\',monospace;text-align:center;padding:20px 0;">'
-                'No predictions yet. Run analysis to populate history.</p>')
-    rows = """
-    <div class="hist-row hist-header">
-      <span>TIMESTAMP</span><span>MACHINE</span><span>PROBABILITY</span><span>STATUS</span>
+        return '<p style="font-family:\'DM Mono\',monospace;font-size:10px;color:rgba(255,255,255,0.15);letter-spacing:2px;text-transform:uppercase;text-align:center;padding:24px 0;">No records yet</p>'
+    h = """
+    <div class="hist-head">
+      <span>TIME</span><span>UNIT</span><span>PROB</span><span>STATUS</span>
     </div>"""
-    for entry in reversed(history[-8:]):
-        sc = "#ff1744" if entry["prediction"] == 1 else "#00e676"
-        st_txt = "FAILURE" if entry["prediction"] == 1 else "NORMAL"
-        rows += f"""
-        <div class="hist-row">
-          <span>{entry['time']}</span>
-          <span>Type {entry['machine_type']}</span>
-          <span style="color:#00e5ff;">{entry['probability']:.1%}</span>
-          <span style="color:{sc};font-weight:700;">{st_txt}</span>
+    for e in reversed(history[-8:]):
+        sc = "#ff4757" if e["prediction"]==1 else "#2ecc71"
+        st_ = "FAILURE" if e["prediction"]==1 else "NOMINAL"
+        h += f"""
+        <div class="hist-row-item">
+          <span>{e['time']}</span>
+          <span>TYPE {e['machine_type']}</span>
+          <span style="color:#41f4e0;">{e['probability']:.1%}</span>
+          <span style="color:{sc};font-weight:600;">{st_}</span>
         </div>"""
-    return rows
+    return h
 
 
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
 #  SIDEBAR
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
 with st.sidebar:
-    st.markdown('<div class="sidebar-brand">⚙ PREDICTMAINT</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sidebar-developer">BY SARVEYASHA SODHIYA</div>', unsafe_allow_html=True)
-    st.markdown("---")
+    st.markdown("""
+    <div class="sb-brand">
+      <div class="sb-logo">AX<span>I</span>OM</div>
+      <div class="sb-dev">◈ Sarveyasha Sodhiya</div>
+    </div>""", unsafe_allow_html=True)
 
-    type_option  = st.selectbox("MACHINE TYPE", ["L","M","H"],
-                                 format_func=lambda x: f"Type {x}  ({'Light' if x=='L' else 'Medium' if x=='M' else 'Heavy'})")
-    air_temp     = st.slider("AIR TEMPERATURE (K)",     290, 320, 300, 1)
-    process_temp = st.slider("PROCESS TEMPERATURE (K)", 300, 350, 310, 1)
-    rpm          = st.slider("ROTATIONAL SPEED (RPM)",  1000, 3000, 1500, 10)
-    torque       = st.slider("TORQUE (Nm)",              10, 80, 40, 1)
-    tool_wear    = st.slider("TOOL WEAR (min)",           0, 300, 50, 1)
+    type_opt     = st.selectbox("MACHINE CLASS", ["L","M","H"],
+                                 format_func=lambda x: f"Type {x} — {'Light' if x=='L' else 'Medium' if x=='M' else 'Heavy'}")
+    air_temp     = st.slider("AIR TEMP  (K)",          290, 320, 300, 1)
+    process_temp = st.slider("PROCESS TEMP  (K)",      300, 350, 310, 1)
+    rpm          = st.slider("ROTATIONAL SPEED  (RPM)",1000,3000,1500,10)
+    torque       = st.slider("TORQUE  (Nm)",           10,  80,  40,  1)
+    tool_wear    = st.slider("TOOL WEAR  (min)",        0,  300,  50,  1)
 
-    st.markdown("---")
-    st.markdown('<p style="font-family:\'Rajdhani\',sans-serif;font-size:0.8rem;'
-                'letter-spacing:2px;color:#00e5ff;text-transform:uppercase;">Sensor Status</p>',
-                unsafe_allow_html=True)
+    st.markdown("<hr>", unsafe_allow_html=True)
+    st.markdown('<p style="font-family:\'DM Mono\',monospace;font-size:9px;letter-spacing:3px;color:rgba(65,244,224,0.5);text-transform:uppercase;margin-bottom:10px;">Live Sensor Status</p>', unsafe_allow_html=True)
 
-    sensor_vals = {
+    sv = {
         "Air Temp (K)":     air_temp,
         "Process Temp (K)": process_temp,
         "RPM":              rpm,
@@ -535,360 +826,334 @@ with st.sidebar:
         "Tool Wear (min)":  tool_wear,
     }
 
-    for sname, val in sensor_vals.items():
-        smin, smax = SAFE_RANGES[sname]
-        status, col = get_sensor_status(val, smin, smax)
+    for sname, val in sv.items():
+        lo, hi  = SAFE[sname]
+        st_, _, hex_c = sensor_status(val, lo, hi)
+        dot = {"ok":"●","warn":"◉","crit":"⬤"}[st_]
         st.markdown(f"""
-        <div style="display:flex;justify-content:space-between;align-items:center;
-                    padding:7px 12px;margin-bottom:5px;
-                    background:rgba(0,229,255,0.03);
-                    border:1px solid rgba(0,229,255,0.09);border-radius:6px;">
-          <span style="font-family:'Space Mono',monospace;font-size:0.65rem;color:rgba(255,255,255,0.55);">{sname}</span>
-          <div style="display:flex;align-items:center;gap:7px;">
-            <span style="font-family:'Rajdhani',sans-serif;font-weight:600;font-size:0.85rem;color:{col};">{val}</span>
-            <span class="dot-{status}"></span>
+        <div class="sensor-row">
+          <span class="sensor-name-lbl">{sname}</span>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span class="sensor-val-lbl" style="color:{hex_c};">{val}</span>
+            <span style="color:{hex_c};font-size:8px;">{dot}</span>
           </div>
         </div>""", unsafe_allow_html=True)
 
-    st.markdown("---")
-    analyse = st.button("⚡  ANALYSE MACHINE HEALTH")
+    st.markdown("<hr>", unsafe_allow_html=True)
+    run_btn = st.button("◈  RUN ANALYSIS")
 
     if st.session_state.history:
-        df_export = pd.DataFrame(st.session_state.history)
+        df_exp = pd.DataFrame(st.session_state.history)
         st.download_button(
-            label="📥  EXPORT HISTORY (CSV)",
-            data=df_export.to_csv(index=False),
-            file_name="maintenance_predictions.csv",
+            label="↓  EXPORT CSV",
+            data=df_exp.to_csv(index=False),
+            file_name="axiom_predictions.csv",
             mime="text/csv",
             use_container_width=True,
         )
 
 
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
 #  HERO
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
 st.markdown("""
-<div class="hero">
-  <div class="hero-title">⚙ Predictive Maintenance AI</div>
-  <div class="hero-subtitle">REAL-TIME MACHINE FAILURE PREDICTION · INDUSTRIAL IoT INTELLIGENCE</div>
-  <div class="hero-byline">Developed by Sarveyasha Sodhiya</div>
+<div class="axiom-hero">
+  <div class="axiom-eyebrow">AXIOM · Predictive Intelligence System</div>
+  <div class="axiom-title">Machine<br><span>Failure</span> Prediction</div>
+  <div class="axiom-sub">REAL-TIME CONDITION MONITORING  ·  ML-POWERED INFERENCE  ·  IoT SENSOR FUSION</div>
+  <div class="axiom-tag">Developed by Sarveyasha Sodhiya</div>
+  <svg class="hero-grid-deco" viewBox="0 0 180 140" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- hex grid decoration -->
+    <path d="M20 10 L40 10 L50 27 L40 44 L20 44 L10 27 Z" stroke="white" stroke-width="0.5"/>
+    <path d="M60 10 L80 10 L90 27 L80 44 L60 44 L50 27 Z" stroke="white" stroke-width="0.5"/>
+    <path d="M100 10 L120 10 L130 27 L120 44 L100 44 L90 27 Z" stroke="white" stroke-width="0.5"/>
+    <path d="M140 10 L160 10 L170 27 L160 44 L140 44 L130 27 Z" stroke="white" stroke-width="0.5"/>
+    <path d="M40 44 L60 44 L70 61 L60 78 L40 78 L30 61 Z" stroke="white" stroke-width="0.5"/>
+    <path d="M80 44 L100 44 L110 61 L100 78 L80 78 L70 61 Z" stroke="white" stroke-width="0.5"/>
+    <path d="M120 44 L140 44 L150 61 L140 78 L120 78 L110 61 Z" stroke="white" stroke-width="0.5"/>
+    <path d="M20 78 L40 78 L50 95 L40 112 L20 112 L10 95 Z" stroke="white" stroke-width="0.5"/>
+    <path d="M60 78 L80 78 L90 95 L80 112 L60 112 L50 95 Z" stroke="white" stroke-width="0.5"/>
+    <path d="M100 78 L120 78 L130 95 L120 112 L100 112 L90 95 Z" stroke="white" stroke-width="0.5"/>
+    <path d="M140 78 L160 78 L170 95 L160 112 L140 112 L130 95 Z" stroke="white" stroke-width="0.5"/>
+    <circle cx="50" cy="27" r="3" fill="white"/>
+    <circle cx="90" cy="61" r="3" fill="white"/>
+    <circle cx="130" cy="95" r="3" fill="white"/>
+  </svg>
 </div>
 """, unsafe_allow_html=True)
 
 
-# ─────────────────────────────────────────────
-#  SUMMARY METRICS
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
+#  KPI ROW
+# ══════════════════════════════════════════════
 total_runs     = len(st.session_state.history)
-total_failures = sum(1 for h in st.session_state.history if h["prediction"] == 1)
-failure_rate   = (total_failures / total_runs * 100) if total_runs else 0
+total_failures = sum(1 for h in st.session_state.history if h["prediction"]==1)
+fail_rate      = (total_failures / total_runs * 100) if total_runs else 0
 dT             = process_temp - air_temp
 
-c1, c2, c3, c4 = st.columns(4)
-with c1:
-    st.markdown(f"""
-    <div class="metric-box">
-      <div class="metric-label">Total Analyses</div>
-      <div class="metric-value">{total_runs}</div>
-      <div class="metric-delta" style="color:#00e5ff;">Session records</div>
-    </div>""", unsafe_allow_html=True)
-with c2:
-    vc = "#ff1744" if total_failures > 0 else "#00e676"
-    st.markdown(f"""
-    <div class="metric-box">
-      <div class="metric-label">Failures Detected</div>
-      <div class="metric-value" style="color:{vc};">{total_failures}</div>
-      <div class="metric-delta" style="color:{vc};">{'⚠ Action needed' if total_failures > 0 else 'All clear'}</div>
-    </div>""", unsafe_allow_html=True)
-with c3:
-    fc = "#ffea00" if failure_rate > 20 else "#00e676"
-    st.markdown(f"""
-    <div class="metric-box">
-      <div class="metric-label">Failure Rate</div>
-      <div class="metric-value" style="color:{fc};">{failure_rate:.1f}%</div>
-      <div class="metric-delta" style="color:#7a9baa;">Across session</div>
-    </div>""", unsafe_allow_html=True)
-with c4:
-    dc = "#ff1744" if dT > 12 else "#ffea00" if dT > 9 else "#00e676"
-    st.markdown(f"""
-    <div class="metric-box">
-      <div class="metric-label">Thermal Delta</div>
-      <div class="metric-value" style="color:{dc};">+{dT}K</div>
-      <div class="metric-delta" style="color:{dc};">{'Alert' if dT > 12 else 'Warning' if dT > 9 else 'Normal'}</div>
-    </div>""", unsafe_allow_html=True)
+k1,k2,k3,k4 = st.columns(4)
+kpi_data = [
+    (k1, "Total Analyses",  str(total_runs),    "SESSION DATA",   "info"),
+    (k2, "Failures Found",  str(total_failures), "⚠ ACTION NEEDED" if total_failures else "ALL CLEAR", "crit" if total_failures else "ok"),
+    (k3, "Failure Rate",    f"{fail_rate:.1f}%", "THIS SESSION",   "warn" if fail_rate>20 else "ok"),
+    (k4, "Thermal Δ",       f"+{dT}K",           "ALERT" if dT>12 else "WARN" if dT>9 else "NOMINAL", "crit" if dT>12 else "warn" if dT>9 else "ok"),
+]
+for col, label, val, badge_txt, badge_cls in kpi_data:
+    with col:
+        st.markdown(f"""
+        <div class="kpi-tile">
+          <div class="kpi-label">{label}</div>
+          <div class="kpi-val">{val}</div>
+          <div><span class="kpi-badge badge-{badge_cls}">{badge_txt}</span></div>
+        </div>""", unsafe_allow_html=True)
 
 
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
 #  ANALYSIS ENGINE
-# ─────────────────────────────────────────────
-type_L   = 1 if type_option == "L" else 0
-type_M   = 1 if type_option == "M" else 0
+# ══════════════════════════════════════════════
+type_L   = 1 if type_opt == "L" else 0
+type_M   = 1 if type_opt == "M" else 0
 features = np.array([[air_temp, process_temp, rpm, torque, tool_wear, type_L, type_M]])
 
-if analyse:
-    with st.spinner("⚡ Initialising sensor matrix..."):
-        time.sleep(0.4)
+if run_btn:
+    with st.spinner("◈  INITIALISING SENSOR MATRIX"):
+        time.sleep(0.3)
 
-    progress_bar = st.progress(0)
-    status_text  = st.empty()
-    steps = [
-        (15,  "Parsing telemetry streams..."),
-        (35,  "Normalising feature vectors..."),
-        (55,  "Running inference engine..."),
-        (75,  "Computing probability distribution..."),
-        (92,  "Generating maintenance report..."),
-        (100, "Analysis complete."),
-    ]
+    pb   = st.progress(0)
+    stxt = st.empty()
+    steps = [(18,"PARSING TELEMETRY"),(36,"FEATURE NORMALISATION"),(55,"LOADING INFERENCE ENGINE"),
+             (72,"RUNNING FORWARD PASS"),(88,"COMPUTING DISTRIBUTIONS"),(100,"REPORT READY")]
     prev = 0
-    for target, msg in steps:
-        status_text.markdown(
-            f'<p style="font-family:\'Space Mono\',monospace;font-size:0.75rem;'
-            f'color:#00e5ff;letter-spacing:1.5px;">{msg}</p>',
-            unsafe_allow_html=True)
-        for i in range(prev, target + 1):
-            progress_bar.progress(i)
-            time.sleep(0.007)
-        prev = target
-
-    status_text.empty()
-    progress_bar.empty()
+    for tgt, msg in steps:
+        stxt.markdown(f'<p style="font-family:\'DM Mono\',monospace;font-size:10px;letter-spacing:3px;color:rgba(65,244,224,0.7);">◈ {msg}</p>', unsafe_allow_html=True)
+        for i in range(prev, tgt+1):
+            pb.progress(i); time.sleep(0.006)
+        prev = tgt
+    stxt.empty(); pb.empty()
 
     if model:
-        prediction = int(model.predict(features)[0])
-        prob       = float(model.predict_proba(features)[0][1])
+        pred = int(model.predict(features)[0])
+        prob = float(model.predict_proba(features)[0][1])
     else:
-        prediction = int(np.random.choice([0, 1], p=[0.7, 0.3]))
-        prob       = float(np.random.uniform(0.6, 0.95) if prediction == 1
-                           else np.random.uniform(0.05, 0.35))
+        pred = int(np.random.choice([0,1], p=[0.72, 0.28]))
+        prob = float(np.random.uniform(0.62,0.94) if pred==1 else np.random.uniform(0.04,0.32))
 
-    record = {
-        "time":         pd.Timestamp.now().strftime("%H:%M:%S"),
-        "machine_type": type_option,
-        "air_temp":     air_temp,
-        "process_temp": process_temp,
-        "rpm":          rpm,
-        "torque":       torque,
-        "tool_wear":    tool_wear,
-        "probability":  prob,
-        "prediction":   prediction,
+    rec = {
+        "time": pd.Timestamp.now().strftime("%H:%M:%S"),
+        "machine_type": type_opt,
+        "air_temp": air_temp, "process_temp": process_temp,
+        "rpm": rpm, "torque": torque, "tool_wear": tool_wear,
+        "probability": prob, "prediction": pred,
     }
-    st.session_state.history.append(record)
-    st.session_state.last_prediction = {"prediction": prediction, "prob": prob}
-    st.session_state.analysis_run    = True
+    st.session_state.history.append(rec)
+    st.session_state.last_pred = {"pred": pred, "prob": prob}
+    st.session_state.ran = True
 
 
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
 #  RESULTS
-# ─────────────────────────────────────────────
-if st.session_state.last_prediction:
-    pred       = st.session_state.last_prediction
-    prediction = pred["prediction"]
-    prob       = pred["prob"]
+# ══════════════════════════════════════════════
+if st.session_state.last_pred:
+    pred = st.session_state.last_pred["pred"]
+    prob = st.session_state.last_pred["prob"]
 
-    st.markdown('<div style="height:20px;"></div>', unsafe_allow_html=True)
-    col1, col2 = st.columns([1, 1.8])
+    st.markdown('<div style="height:18px;"></div>', unsafe_allow_html=True)
 
-    with col1:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown('<div class="section-title">Prediction Result</div>', unsafe_allow_html=True)
-        if prediction == 1:
-            st.markdown('<div class="status-pill status-fail" style="width:100%;justify-content:center;margin-bottom:20px;">⚠&nbsp;&nbsp;FAILURE IMMINENT</div>', unsafe_allow_html=True)
-        else:
-            st.markdown('<div class="status-pill status-ok" style="width:100%;justify-content:center;margin-bottom:20px;">✓&nbsp;&nbsp;MACHINE NOMINAL</div>', unsafe_allow_html=True)
+    col_g, col_a = st.columns([1, 1.85])
 
-        st.markdown(gauge_html(prob), unsafe_allow_html=True)
+    with col_g:
+        st.markdown('<div class="panel">', unsafe_allow_html=True)
+        st.markdown('<div class="panel-label">Prediction Result</div>', unsafe_allow_html=True)
 
-        confidence = abs(prob - 0.5) * 2 * 100
+        cls  = "fail" if pred==1 else "ok"
+        icon = "⚠" if pred==1 else "✓"
+        msg  = "FAILURE IMMINENT" if pred==1 else "MACHINE NOMINAL"
+        st.markdown(f'<div class="pred-banner {cls}">{icon}&nbsp;&nbsp;{msg}</div>', unsafe_allow_html=True)
+
+        st.markdown(gauge_svg(prob), unsafe_allow_html=True)
+
+        conf = abs(prob - 0.5) * 2 * 100
         st.markdown(f"""
-        <div style="margin-top:16px;padding:12px;background:rgba(0,229,255,0.04);
-                    border:1px solid rgba(0,229,255,0.12);border-radius:8px;text-align:center;">
-          <div style="font-family:'Space Mono',monospace;font-size:0.65rem;
-                      color:rgba(255,255,255,0.4);letter-spacing:1.5px;margin-bottom:4px;">
-            MODEL CONFIDENCE
-          </div>
-          <div style="font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:700;color:#00e5ff;">
-            {confidence:.1f}%
-          </div>
+        <div class="conf-block">
+          <div class="conf-lbl">Model Confidence</div>
+          <div class="conf-val">{conf:.1f}%</div>
         </div>""", unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    with col2:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown('<div class="section-title">Recommended Actions</div>', unsafe_allow_html=True)
-        st.markdown(recommendations_html(sensor_vals), unsafe_allow_html=True)
+    with col_a:
+        st.markdown('<div class="panel">', unsafe_allow_html=True)
+        st.markdown('<div class="panel-label">Maintenance Directives</div>', unsafe_allow_html=True)
+        st.markdown(actions_html(sv), unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
 
-# ─────────────────────────────────────────────
-#  VISUALISATIONS
-# ─────────────────────────────────────────────
-st.markdown('<div style="height:8px;"></div>', unsafe_allow_html=True)
-col3, col4 = st.columns(2)
+# ══════════════════════════════════════════════
+#  SENSOR OVERVIEW CHART
+# ══════════════════════════════════════════════
+st.markdown('<div style="height:6px;"></div>', unsafe_allow_html=True)
+col_c1, col_c2 = st.columns(2)
 
-# ── Sensor bar chart ──────────────────────────
-with col3:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">Sensor Overview</div>', unsafe_allow_html=True)
+with col_c1:
+    st.markdown('<div class="panel">', unsafe_allow_html=True)
+    st.markdown('<div class="panel-label">Sensor Overview</div>', unsafe_allow_html=True)
 
     raw_vals = [air_temp, process_temp, rpm, torque, tool_wear]
-    # Normalise current values 0-1
-    norm = [(v - mn) / max(mx - mn, 1)
-            for v, mn, mx in zip(raw_vals, SENSOR_MINS, SENSOR_MAXS)]
-    # Normalise safe upper limits 0-1
-    safe_upper_norm = [
-        (SAFE_RANGES[k][1] - mn) / max(mx - mn, 1)
-        for k, mn, mx in zip(SENSOR_KEYS, SENSOR_MINS, SENSOR_MAXS)
-    ]
+    norm     = [(v - mn) / max(mx - mn, 1) for v, mn, mx in zip(raw_vals, S_MINS, S_MAXS)]
+    safe_hi  = [(SAFE[k][1] - mn) / max(mx - mn, 1) for k, mn, mx in zip(S_KEYS, S_MINS, S_MAXS)]
 
-    bar_colors = []
-    for n, sn in zip(norm, safe_upper_norm):
-        if n > sn:          bar_colors.append("#ff1744")
-        elif n > sn * 0.88: bar_colors.append("#ffea00")
-        else:               bar_colors.append("#00e5ff")
+    bar_cols = []
+    for n, sh in zip(norm, safe_hi):
+        if n > sh:          bar_cols.append(M_RED)
+        elif n > sh * 0.88: bar_cols.append(M_AMBER)
+        else:               bar_cols.append(M_CYAN)
 
-    fig, ax = plt.subplots(figsize=(6, 3.5), facecolor="none")
+    fig, ax = plt.subplots(figsize=(6, 3.4), facecolor="none")
     ax.set_facecolor("none")
     fig.patch.set_alpha(0)
 
-    # Value bars
-    ax.barh(SENSOR_LABELS, norm, color=bar_colors, height=0.5, zorder=3)
+    y_pos = list(range(len(S_LABELS)))
+    bars  = ax.barh(y_pos, norm, color=bar_cols, height=0.42, zorder=3)
 
-    # Safe-limit markers as scatter (avoids the bad color string issue)
-    for idx, sn in enumerate(safe_upper_norm):
-        ax.plot([sn, sn], [idx - 0.3, idx + 0.3],
-                color=(1, 1, 1, 0.35), linewidth=1.4, linestyle="--", zorder=4)
+    # Background track bars
+    ax.barh(y_pos, [1.0]*len(S_LABELS), color=(1,1,1,0.04), height=0.42, zorder=2)
 
-    ax.set_xlim(0, 1)
-    ax.set_xlabel("Normalised value (0–1)", color="#7a9baa", fontsize=8,
-                  fontfamily="monospace", labelpad=6)
+    # Safe limit lines via scatter verticals
+    for i, sh in enumerate(safe_hi):
+        ax.plot([sh, sh], [i - 0.28, i + 0.28],
+                color=(1,1,1,0.3), linewidth=1.2, linestyle="--", zorder=4)
 
-    for bar, raw in zip(ax.patches, raw_vals):
-        ax.text(bar.get_width() + 0.02, bar.get_y() + bar.get_height() / 2,
-                str(raw), va="center", ha="left",
-                color="#00e5ff", fontsize=9, fontfamily="monospace")
+    # Value labels
+    for i, (bar, rv) in enumerate(zip(bars, raw_vals)):
+        ax.text(bar.get_width() + 0.022, i, str(rv),
+                va="center", ha="left", color=(65/255,244/255,224/255,0.8),
+                fontsize=9, fontfamily="monospace")
 
-    ax.tick_params(colors="#7a9baa", labelsize=9)
-    for lbl in ax.get_yticklabels():
-        lbl.set_fontfamily("monospace")
-        lbl.set_color("#c8dde6")
-    for spine in ax.spines.values():
-        spine.set_color((0, 0.9, 1, 0.12))
-    ax.xaxis.grid(True, color=(0, 0.9, 1, 0.07), linewidth=0.5, zorder=0)
+    ax.set_yticks(y_pos)
+    ax.set_yticklabels(S_LABELS, fontfamily="monospace", fontsize=9, color=(212/255,232/255,240/255,0.5))
+    ax.set_xlim(0, 1.2)
+    ax.set_xticks([0, 0.25, 0.5, 0.75, 1.0])
+    ax.set_xticklabels(["0", "25%", "50%", "75%", "100%"],
+                        fontfamily="monospace", fontsize=8, color=(212/255,232/255,240/255,0.3))
+
+    for spine in ax.spines.values(): spine.set_visible(False)
+    ax.xaxis.grid(True, color=M_GRID, linewidth=0.5, zorder=0)
     ax.set_axisbelow(True)
+    ax.tick_params(length=0)
 
-    plt.tight_layout(pad=0.5)
-    st.pyplot(fig)
+    plt.tight_layout(pad=0.3)
+    st.pyplot(fig, use_container_width=True)
     plt.close(fig)
 
-    st.markdown('<p style="font-family:\'Space Mono\',monospace;font-size:0.62rem;'
-                'color:rgba(255,255,255,0.3);margin-top:6px;">'
-                'Dashed line = safe upper limit.  Red/Yellow = out-of-range.</p>',
-                unsafe_allow_html=True)
+    st.markdown('<p style="font-family:\'DM Mono\',monospace;font-size:9px;color:rgba(255,255,255,0.2);letter-spacing:1.5px;margin-top:6px;">-- DASHED LINE = SAFE UPPER LIMIT</p>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 
-# ── Feature importance ────────────────────────
-with col4:
-    st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.markdown('<div class="section-title">Feature Importance</div>', unsafe_allow_html=True)
+# ══════════════════════════════════════════════
+#  FEATURE IMPORTANCE PANEL
+# ══════════════════════════════════════════════
+with col_c2:
+    st.markdown('<div class="panel">', unsafe_allow_html=True)
+    st.markdown('<div class="panel-label">Feature Importance</div>', unsafe_allow_html=True)
 
     if model and hasattr(model, "feature_importances_"):
-        raw_imp = model.feature_importances_
-        imp_dict = {n: float(v) for n, v in zip(FEATURE_NAMES, raw_imp)}
+        imp = {n: float(v) for n, v in zip(FT_NAMES, model.feature_importances_)}
     elif model and hasattr(model, "estimators_"):
         try:
-            raw_imp  = np.mean([e.feature_importances_ for e in model.estimators_], axis=0)
-            imp_dict = {n: float(v) for n, v in zip(FEATURE_NAMES, raw_imp)}
+            ri  = np.mean([e.feature_importances_ for e in model.estimators_], axis=0)
+            imp = {n: float(v) for n, v in zip(FT_NAMES, ri)}
         except Exception:
-            imp_dict = dict(zip(FEATURE_NAMES, [0.18,0.15,0.22,0.20,0.14,0.06,0.05]))
+            imp = dict(zip(FT_NAMES, [0.18,0.15,0.22,0.20,0.14,0.06,0.05]))
     else:
-        imp_dict = dict(zip(FEATURE_NAMES, [0.18,0.15,0.22,0.20,0.14,0.06,0.05]))
+        imp = dict(zip(FT_NAMES, [0.18,0.15,0.22,0.20,0.14,0.06,0.05]))
 
-    st.markdown(feature_importance_html(imp_dict), unsafe_allow_html=True)
+    st.markdown(feature_bars_html(imp), unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
 
-# ─────────────────────────────────────────────
-#  HISTORY CHART + TABLE
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
+#  TREND + HISTORY
+# ══════════════════════════════════════════════
 if len(st.session_state.history) > 1:
-    st.markdown('<div style="height:8px;"></div>', unsafe_allow_html=True)
-    col5, col6 = st.columns([1.6, 1])
+    st.markdown('<div style="height:6px;"></div>', unsafe_allow_html=True)
+    col_t, col_h = st.columns([1.6, 1])
 
-    with col5:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown('<div class="section-title">Probability Trend</div>', unsafe_allow_html=True)
+    with col_t:
+        st.markdown('<div class="panel">', unsafe_allow_html=True)
+        st.markdown('<div class="panel-label">Probability Trend</div>', unsafe_allow_html=True)
 
         probs = [h["probability"] for h in st.session_state.history]
         preds = [h["prediction"]  for h in st.session_state.history]
-        xs    = list(range(1, len(probs) + 1))
+        xs    = list(range(1, len(probs)+1))
 
-        fig2, ax2 = plt.subplots(figsize=(7, 3), facecolor="none")
+        fig2, ax2 = plt.subplots(figsize=(7, 2.9), facecolor="none")
         ax2.set_facecolor("none")
         fig2.patch.set_alpha(0)
 
-        ax2.axhspan(0.7, 1.0, color="#ff1744", alpha=0.06, zorder=0)
-        ax2.axhspan(0.3, 0.7, color="#ffea00", alpha=0.04, zorder=0)
-        ax2.axhline(0.5, color=(1,1,1,0.15), linewidth=0.8, linestyle="--", zorder=1)
-        ax2.axhline(0.7, color=(1,0.1,0.27,0.3), linewidth=0.6, linestyle=":", zorder=1)
+        # Zones
+        ax2.axhspan(0.7, 1.0, color=M_RED[0:3]+(0.05,),   zorder=0)
+        ax2.axhspan(0.3, 0.7, color=M_AMBER[0:3]+(0.04,), zorder=0)
+        ax2.axhline(0.5, color=(1,1,1,0.1), lw=0.8, ls="--", zorder=1)
+        ax2.axhline(0.7, color=M_RED[0:3]+(0.25,), lw=0.6, ls=":", zorder=1)
 
-        ax2.plot(xs, probs, color="#00e5ff", linewidth=1.8, zorder=3)
-        ax2.fill_between(xs, probs, alpha=0.12, color="#00e5ff", zorder=2)
+        # Area + line
+        ax2.fill_between(xs, probs, alpha=0.07, color=M_CYAN, zorder=2)
+        ax2.plot(xs, probs, color=M_CYAN, lw=1.6, zorder=3)
 
+        # Points
         for xi, pi, pr in zip(xs, probs, preds):
-            dot_c = (1,0.09,0.27,1) if pr == 1 else (0,0.9,0.46,1)
-            ax2.scatter([xi], [pi], color=[dot_c], s=55, zorder=4)
+            c = M_RED if pr==1 else M_GREEN
+            ax2.scatter([xi], [pi], color=[c], s=45, zorder=4, edgecolors="none")
 
-        ax2.set_ylim(0, 1)
-        ax2.set_xlim(0.5, max(xs) + 0.5)
-        ax2.set_xlabel("Analysis Run", color="#7a9baa", fontsize=8, fontfamily="monospace")
-        ax2.set_ylabel("Failure Probability", color="#7a9baa", fontsize=8, fontfamily="monospace")
-        ax2.tick_params(colors="#7a9baa", labelsize=8)
-        for sp in ax2.spines.values():
-            sp.set_color((0,0.9,1,0.12))
-        ax2.yaxis.set_major_formatter(plt.FuncFormatter(lambda v, _: f"{v:.0%}"))
-        ax2.yaxis.grid(True, color=(0,0.9,1,0.07), linewidth=0.5, zorder=0)
+        ax2.set_ylim(-0.02, 1.05)
+        ax2.set_xlim(0.5, max(xs)+0.5)
+        ax2.yaxis.set_major_formatter(plt.FuncFormatter(lambda v,_: f"{v:.0%}"))
+        ax2.yaxis.set_tick_params(labelsize=8)
+        ax2.xaxis.set_tick_params(labelsize=8)
+        for tl in ax2.get_yticklabels(): tl.set_color((212/255,232/255,240/255,0.35)); tl.set_fontfamily("monospace")
+        for tl in ax2.get_xticklabels(): tl.set_color((212/255,232/255,240/255,0.35)); tl.set_fontfamily("monospace")
+        for sp in ax2.spines.values(): sp.set_visible(False)
+        ax2.yaxis.grid(True, color=M_GRID, lw=0.5, zorder=0)
         ax2.set_axisbelow(True)
-        plt.tight_layout(pad=0.4)
-        st.pyplot(fig2)
+        ax2.tick_params(length=0)
+
+        plt.tight_layout(pad=0.3)
+        st.pyplot(fig2, use_container_width=True)
         plt.close(fig2)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    with col6:
-        st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.markdown('<div class="section-title">History Log</div>', unsafe_allow_html=True)
-        st.markdown(history_table_html(st.session_state.history), unsafe_allow_html=True)
+    with col_h:
+        st.markdown('<div class="panel">', unsafe_allow_html=True)
+        st.markdown('<div class="panel-label">Prediction Log</div>', unsafe_allow_html=True)
+        st.markdown(history_html(st.session_state.history), unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
 
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
 #  EMPTY STATE
-# ─────────────────────────────────────────────
-if not st.session_state.analysis_run:
+# ══════════════════════════════════════════════
+if not st.session_state.ran:
     st.markdown("""
-    <div style="text-align:center;padding:60px 0 40px;">
-      <div style="font-size:64px;margin-bottom:20px;opacity:0.15;">⚙</div>
-      <div style="font-family:'Rajdhani',sans-serif;font-size:1.1rem;font-weight:600;
-                  letter-spacing:3px;color:rgba(0,229,255,0.35);text-transform:uppercase;">
-        Configure parameters in the sidebar<br>and click ANALYSE MACHINE HEALTH
+    <div class="empty-state">
+      <div class="empty-state-icon">⬡</div>
+      <div class="empty-state-msg">
+        Configure sensor parameters in the sidebar<br>
+        and execute  ◈  RUN ANALYSIS
       </div>
     </div>""", unsafe_allow_html=True)
 
 
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
 #  FOOTER
-# ─────────────────────────────────────────────
+# ══════════════════════════════════════════════
 st.markdown("""
-<div class="footer">
-  <div class="footer-text">
-    ⚙&nbsp; PREDICTIVE MAINTENANCE AI &nbsp;·&nbsp;
-    Powered by Machine Learning &nbsp;·&nbsp;
-    Developed by <span class="footer-name">SARVEYASHA SODHIYA</span>
-    &nbsp;·&nbsp; Built with Streamlit &amp; Scikit-Learn
+<div class="axiom-footer">
+  <div class="axiom-footer-main">
+    ◈&nbsp; AXIOM PREDICTIVE MAINTENANCE SYSTEM &nbsp;·&nbsp;
+    Machine Learning &nbsp;·&nbsp;
+    Developed by <span class="axiom-footer-dev">SARVEYASHA SODHIYA</span>
   </div>
-  <div style="margin-top:8px;font-family:'Space Mono',monospace;font-size:0.6rem;
-              color:rgba(255,255,255,0.15);letter-spacing:1px;">
-    Industrial IoT · Predictive Analytics · Real-time Monitoring
+  <div class="axiom-footer-sub">
+    Streamlit · Scikit-Learn · Industrial IoT · Condition Monitoring · Predictive Analytics
   </div>
 </div>
 """, unsafe_allow_html=True)
